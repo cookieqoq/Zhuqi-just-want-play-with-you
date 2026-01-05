@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>我的跑山導覽地圖</title> <link rel="icon" href="/images/favicon.ico">
+    <link rel="stylesheet" href="/css/reset.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/common.min.css">
+    <link rel="stylesheet" href="/css/main.min.css">
+    <link rel="stylesheet" href="/css/custom.min.css">
+    <link rel="stylesheet" href="/css/kf-components.min.css">
+    <link rel="stylesheet" href="/Scripts/OwlCarousel2-2.3.4/assets/owl.carousel.min.css">
+    <script src="/Scripts/lib/modernizr-custom.min.js"></script>
+    <script src="/Scripts/lib/jquery_kf.js"></script>
+    <script src='https://maps.google.com/maps/api/js?key=AIzaSyDjxzQk65vv-uotOQR_rABLuux1q1-MjeI&language=zh-TW'></script>
+    <script src='/Scripts/handlebars-v4.7.7.js'></script>
+    <script src='/Scripts/GoogleMapApi.js'></script>
+</head>
+<body>
+    <header class="map-header">
+        <h1 class="map-header-Logo text-center">
+            <a title="回首頁" href="/">
+                <span style="color:white; font-weight:bold; font-size: 24px;">我的機車導覽網</span>
+            </a>
+        </h1>
+    </header>
+    <div class="mp-wrap">
+        <div class="mp-aside">
+            <form action="" method="get" class="kf-search-unit form-row">
+                <div class="kf-search-unit-bar form-row">
+                    <div class="form-group col">
+                        <input id="SearchKeyword" type="text" placeholder="搜尋我的景點..." class="form-control kf-search-unit-keyword">
+                    </div>
+                </div>
+                <div class="kf-search-unit-btn d-flex justify-content-center align-items-center">
+                    <input id="cleanAll" class="btn btn-secondary kf-search-unit-clear mr-2" type="button" value="清除">
+                </div>
+            </form>
+
+            <div class="map-aside-content">
+                <div class="map-list">
+                    </div>
+            </div>
+
+            <div class="map-aside_foot">
+                <div class="map-foot-txt">
+                    我的私房景點
+                </div>
+            </div>
+        </div>
+
+        <div id="g-map" class="mp-map"></div>
+    </div>
+
+    <script id="divMapMarkInfo" type="text/x-handlebars-template">
+        <div class="map-popup kf-item card-travel">
+            {{#if PhotoUrl}}
+            <div class="kf-img obj-img-cover d-none d-md-block">
+                <figure class="embed-responsive embed-responsive-16by9">
+                    <img src="{{PhotoUrl}}" alt="{{Caption}}" />
+                </figure>
+            </div>
+            {{/if}}
+            <div class="kf-text-content py-md-2">
+                <div class="d-flex align-items-center justify-content-between my-2">
+                    <span class="badge badge-pill badge-primary mb-0">{{TravelSourceName}}</span>
+                </div>
+                <div class="kf-title">{{Caption}}</div>
+                <div class="kf-ctr mt-2 p-0">
+                    <i class="fas fa-phone text-primary" aria-hidden="true"></i>
+                    <span>{{TEL}}</span>
+                </div>
+                <div class="kf-ctr mt-1 p-0">
+                    <i class="fas fa-map-marker-alt text-primary" aria-hidden="true"></i>
+                    <span>{{ADDRESS}}</span>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script src="/Scripts/select2-develop/src/js/select2.min.js"></script>
+    <script src="/Scripts/select2-develop/src/js/i18n/zh-TW.js"></script>
+    <script src="/Scripts/OwlCarousel2-2.3.4/owl.carousel.min.js"></script>
+    <script src="/Scripts/common.min.js"></script>
+    <script src="/Scripts/main.js"></script>
+    <script src="/Scripts/module/search_unit.js"></script>
+
+    <script>
+        $(function () {
+            // 1. 初始化地圖 (預設嘉義市)
+            initialSiteGoogleMap('g-map', 23.4807004, 120.4527848, 13);
+            ClearMarker(); 
+
+            // ==========================================
+            // ▼ 請在這裡修改你的景點 ▼
+            // ==========================================
+            var mySpots = [
+                {
+                    id: "spot_01",
+                    name: "Yamaha R7 跑山集合點", // 景點名稱
+                    address_search: "嘉義市東區大雅路二段", // 直接打地址或是地標名
+                    tel: "無",
+                    type: "集合點",
+                    imgUrl: "r7.jpg", // 圖片檔名(記得把照片放在同一個資料夾)
+                    link: "#"
+                },
+                {
+                    id: "spot_02",
+                    name: "常去的咖啡廳",
+                    address_search: "嘉義市中山路528號", // 這裡打地址
+                    tel: "05-1234567",
+                    type: "餐飲",
+                    imgUrl: "coffee.jpg", // 圖片檔名
+                    link: "#"
+                },
+                {
+                    id: "spot_03",
+                    name: "嘉義火車站",
+                    address_search: "嘉義火車站", // 這裡打地標名也可以
+                    tel: "05-2228904",
+                    type: "交通",
+                    imgUrl: "https://placehold.co/400x400?text=Station", // 這是假圖，你可以換成自己的
+                    link: "#"
+                }
+                // 想加新的，就複製上面大括號 {...}, 的區塊貼在下面
+            ];
+            // ==========================================
+            // ▲ 修改結束，下面都不要動 ▲
+            // ==========================================
+
+            var $listContainer = $('.map-list');
+            $listContainer.empty();
+            
+            // 嘗試建立 Geocoder (地址轉座標工具)
+            var geocoder;
+            try {
+                geocoder = new google.maps.Geocoder();
+            } catch (e) {
+                console.error("Google Maps API 未載入或是沒有 Geocoding 權限");
+                alert("地圖功能異常：請確認原本網站的 API Key 是否支援地址搜尋");
+            }
+
+            mySpots.forEach(function (spot) {
+                // A. 先產生左邊的列表 HTML
+                var listItemHTML = `
+                    <a id="${spot.id}" class="kf-img obj-img-cover map-list_item" href="javascript:void(0);">
+                        <figure class="embed-responsive embed-responsive-1by1">
+                            <img src="${spot.imgUrl}" alt="${spot.name}" onerror="this.src='https://placehold.co/100x100?text=NoImg'">
+                        </figure>
+                        <div class="map-list_body">
+                            <span class="badge badge-pill badge-primary">${spot.type}</span>
+                            <div class="map-list_tit text-truncate">${spot.name}</div>
+                            <span class="map-list_more" data-link="${spot.link}">
+                                <span>詳細資訊</span>
+                                <i class="fas fa-angle-right ml-1" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </a>`;
+                $listContainer.append(listItemHTML);
+
+                // B. 用地址去問 Google 座標在哪，然後釘上去
+                if (geocoder) {
+                    geocoder.geocode({ 'address': spot.address_search }, function (results, status) {
+                        if (status === 'OK') {
+                            var lat = results[0].geometry.location.lat();
+                            var lng = results[0].geometry.location.lng();
+                            
+                            // 呼叫原本網站的標記功能
+                            CreateSiteMarker(lat, lng, spot.name, spot.tel, spot.address_search, spot.type, spot.id, spot.imgUrl, spot.link);
+
+                            // 讓左邊列表跟地圖連動
+                            $(`#${spot.id}`).on('click', function () {
+                                showSiteInfo(spot.name, lat, lng, spot.tel, spot.address_search, spot.type, spot.id, spot.imgUrl, spot.link);
+                            });
+                        } else {
+                            console.log('地址找不到: ' + spot.name + ' (' + status + ')');
+                        }
+                    });
+                }
+            });
+
+            // 讓詳細資訊按鈕可以點
+            $('.map-list').on('click', '.map-list_more', function (e) {
+                e.stopPropagation();
+                var link = $(this).attr('data-link');
+                if(link && link !== '#') window.open(link, '_blank');
+            });
+            
+            // 搜尋欄位的清除按鈕
+            $('#cleanAll').on('click', function(){
+                $('#SearchKeyword').val('');
+            });
+        });
+    </script>
+</body>
+</html>

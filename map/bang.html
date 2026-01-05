@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>景點詳細介紹</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+
+    <style>
+        body { background: #f4f4f4; padding: 20px; font-family: "Microsoft JhengHei", sans-serif; }
+        .container { max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        /* 主圖樣式 */
+        .main-spot-img { width: 100%; height: auto; border-radius: 5px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .back-btn { margin-bottom: 20px; }
+        .addr-line { font-size: 18px; color: #555; margin-bottom: 20px; }
+        .addr-line i { color: #dc3545; margin-right: 5px; }
+        
+        /* 照片牆小圖的樣式 */
+        .gallery-item {
+            display: block; /* 讓連結填滿 */
+            cursor: zoom-in; /* 滑鼠移過去變放大鏡 */
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .gallery-img { 
+            width: 100%; 
+            height: 200px; /* 固定高度，讓格子變整齊 */
+            object-fit: cover; /* 讓照片填滿格子不變形 */
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover .gallery-img { transform: scale(1.1); } 
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="javascript:window.close();" class="btn btn-outline-secondary back-btn">
+            &larr; 關閉視窗
+        </a>
+
+        <h1 class="font-weight-bold">奮起湖大飯店-奮起湖便當 - 奮起湖便當創始店!</h1>
+        
+        <p class="addr-line">
+            <i class="fas fa-map-marker-alt"></i> 嘉義縣竹崎鄉178-1號
+        <hr>
+
+        <img src="bang.jpg" class="main-spot-img" alt="主照片">
+
+
+        <div class="content">
+            <h3>景點特色</h3>
+            <p>來到奮起湖老街，當然不能錯過傳說中的奮起湖便當。老街上雖有多家便當店，但以「奮起湖大飯店」的便當最為知名，主要因多年前與 7-11 超商合作，推出聯名便當而聲名大噪。便當內包含三樣配菜與半顆滷蛋，配菜有炒高麗菜、筍絲及醃漬物，整體清爽不油膩。滷蛋入味香濃，白飯粒粒分明，主菜排骨厚度十足，醬香滲入肉中，肉質紮實有咬勁，戰斧豬排選用肩頰肉連接前腿的部位，肉質本身軟嫩又帶 Q 彈，經店家醃製後更為美味。雞腿也醃得相當入味，烤過後依然保持 Q 彈口感，與豬排相比毫不遜色，是來店必嚐的招牌肉品之一。</p>
+            
+            <hr class="my-4"> 
+            
+            <h3 class="mb-3"><i class="fas fa-camera-retro"></i> 更多照片</h3>
+            <p class="text-muted small">點擊照片可放大檢視</p>
+            
+            <div class="row">
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="bang1.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="bang1.jpg" class="gallery-img" alt="照片說明1">
+                    </a>
+                </div>
+                
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="bang2.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="bang2.jpg" class="gallery-img" alt="照片說明2">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="bang3.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="bang3.jpg" class="gallery-img" alt="照片說明3">
+                    </a>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <strong><i class="fas fa-info-circle"></i> 小提醒：</strong>便當價格偏貴，200元上下，但是是最正宗的奮起湖便當喔！
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+</body>
+</html>

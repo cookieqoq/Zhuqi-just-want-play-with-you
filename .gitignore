@@ -1,0 +1,6 @@
+# Visual Studio 暫存與快取
+.vs/
+[Bb]in/
+[Obj]/
+*.user
+*.suo

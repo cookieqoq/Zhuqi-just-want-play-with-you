@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竹崎3D遊戲導覽</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/game.css">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+</head>
+<body>
+    <!-- 導覽列圖片容器 -->
+    <div class="navbar-image-container">
+        <!-- 遮罩層 -->
+        <div class="navbar-overlay"></div>
+
+        <!-- 導覽內容 -->
+        <div class="navbar-content">
+            <!-- Logo/品牌 -->
+            <a href="index.html" class="navbar-brand-custom">竹崎3D遊戲導覽</a>
+
+            <!-- 導覽選單 -->
+            <ul class="navbar-menu">
+                <li><a href="home.html#map">竹崎地圖</a></li>
+                <li><a href="https://bohuii.github.io/finalproject/">留言板</a></li>
+                <li><a href="home.html#about">竹崎簡介</a></li>
+                <li><a href="home.html#aboutUs">關於我們</a></li>
+                <li><a href="game.html">遊戲導覽</a></li>
+            </ul>
+
+            <!-- 返回首頁按鈕 -->
+            <a href="home.html" class="back-home-btn">返回首頁</a>
+        </div>
+    </div>
+
+    <!-- 主要內容區 -->
+    <div class="container py-5 text-center">
+        <h1 class="display-4 fw-bold">開始你的竹崎之旅</h1>
+        <p class="lead">點擊下方區域或按鈕開始載入 3D 虛擬導覽遊戲</p>
+
+        <div class="game-container" id="unity-container">
+            <div>
+                <p>Unity 遊戲畫面載入位置</p>
+                <button class="btn btn-warning btn-lg">載入遊戲</button>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button class="btn btn-primary px-5">全螢幕遊玩</button>
+            <button class="btn btn-outline-secondary px-5">操作說明</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 導覽列輪播功能 -->
+    <script src="scripts/navbar-carousel.js"></script>
+</body>
+</html>

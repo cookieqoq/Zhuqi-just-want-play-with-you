@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>景點詳細介紹</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+
+    <style>
+        body { background: #f4f4f4; padding: 20px; font-family: "Microsoft JhengHei", sans-serif; }
+        .container { max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        /* 主圖樣式 */
+        .main-spot-img { width: 100%; height: auto; border-radius: 5px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .back-btn { margin-bottom: 20px; }
+        .addr-line { font-size: 18px; color: #555; margin-bottom: 20px; }
+        .addr-line i { color: #dc3545; margin-right: 5px; }
+        
+        /* 照片牆小圖的樣式 */
+        .gallery-item {
+            display: block; /* 讓連結填滿 */
+            cursor: zoom-in; /* 滑鼠移過去變放大鏡 */
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .gallery-img { 
+            width: 100%; 
+            height: 200px; /* 固定高度，讓格子變整齊 */
+            object-fit: cover; /* 讓照片填滿格子不變形 */
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover .gallery-img { transform: scale(1.1); } 
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="javascript:window.close();" class="btn btn-outline-secondary back-btn">
+            &larr; 關閉視窗
+        </a>
+
+        <h1 class="font-weight-bold">竹崎親水公園 - 放鬆休息好去處</h1>
+        
+        <p class="addr-line">
+            <i class="fas fa-map-marker-alt"></i> 嘉義縣竹崎鄉中華路
+        </p>
+        <hr>
+
+        <img src="park.jpg" class="main-spot-img" alt="主照片">
+
+
+        <div class="content">
+            <h3>景點特色</h3>
+            <p>竹崎親水公園是結合自然生態與休閒遊憩的親子景點。園區內有寬廣的草地與完善的步道，並設有戲水區，夏天可消暑玩水，平日也非常適合散步與野餐。園區中的「天空走廊」是一大特色，走在高空步道上，能以不同的高度與角度欣賞周圍景色，增添遊覽樂趣，是大小朋友午後放鬆、親近自然的好去處。</p>
+            
+            <hr class="my-4"> 
+            
+            <h3 class="mb-3"><i class="fas fa-camera-retro"></i> 更多照片</h3>
+            <p class="text-muted small">點擊照片可放大檢視</p>
+            
+            <div class="row">
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="park1.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="park1.jpg" class="gallery-img" alt="照片說明1">
+                    </a>
+                </div>
+                
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="park2.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="park2.jpg" class="gallery-img" alt="照片說明2">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="park3.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="park3.jpg" class="gallery-img" alt="照片說明3">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="park4.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="park4.jpg" class="gallery-img" alt="照片說明4">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="park5.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="park5.jpg" class="gallery-img" alt="照片說明5">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="park6.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="park6.jpg" class="gallery-img" alt="照片說明6">
+                    </a>
+                </div>
+                
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <strong><i class="fas fa-info-circle"></i> 小提醒：</strong>蚊子較多，記得帶防蚊液！
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竹想一起玩-選擇模式</title>
+    <link rel="stylesheet" href="styles/common.css">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <style>
+        /* 背景圖片容器 */
+        .background-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* 背景圖片輪播 */
+        .background-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            z-index: 0;
+        }
+
+            .background-slide.active {
+                opacity: 1;
+            }
+
+        /* 背景遮罩層 - 增加文字可讀性 */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
+        }
+
+        /* 內容層 */
+        .content-layer {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 標題樣式 */
+        .main-title {
+            font-size: 64px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
+            margin-bottom: 80px;
+            letter-spacing: 8px;
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        /* 按鈕容器 */
+        .button-container {
+            display: flex;
+            gap: 100px;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        /* 按鈕基本樣式 */
+        .mode-button {
+            padding: 20px 60px;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+        }
+
+        /* 左側按鈕 - 綠色系 */
+        .button-left {
+            background: linear-gradient(135deg, #6B8E23, #9ACD32);
+            color: white;
+        }
+
+            .button-left:hover {
+                background: linear-gradient(135deg, #556B2F, #6B8E23);
+                transform: translateY(-5px);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+            }
+
+        /* 右側按鈕 - 棕色系 */
+        .button-right {
+            background: linear-gradient(135deg, #8B4513, #CD853F);
+            color: white;
+        }
+
+            .button-right:hover {
+                background: linear-gradient(135deg, #654321, #8B4513);
+                transform: translateY(-5px);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+            }
+
+        /* 輪播指示器 */
+        .slide-indicators {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 2;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .indicator.active {
+                background: white;
+                width: 30px;
+                border-radius: 6px;
+            }
+
+        /* 動畫效果 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 36px;
+                margin-bottom: 50px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .mode-button {
+                padding: 15px 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景圖片容器 -->
+    <div class="background-container">
+        <!-- 背景輪播圖片 - 動態載入 -->
+        <div id="background-slides-container"></div>
+
+        <!-- 背景遮罩層 -->
+        <div class="background-overlay"></div>
+
+        <!-- 內容層 -->
+        <div class="content-layer">
+            <!-- 標題 -->
+            <h1 class="main-title">竹想一起玩，你想怎麼玩</h1>
+
+            <!-- 按鈕容器 -->
+            <div class="button-container">
+                <button class="mode-button button-left" onclick="selectMode('explore')">
+                    資料探索
+                </button>
+                <button class="mode-button button-right" onclick="selectMode('guide')">
+                    竹崎3D遊戲導覽
+                </button>
+            </div>
+        </div>
+
+        <!-- 輪播指示器 - 動態產生 -->
+        <div class="slide-indicators" id="indicators-container"></div>
+    </div>
+
+    <script>
+        // 模式選擇功能
+        function selectMode(mode) {
+            if (mode === 'explore') {
+                window.location.href = 'home.html';
+            } else if (mode === 'guide') {
+                window.location.href = 'game.html';
+            }
+        }
+
+        // 背景圖片陣列 - 從 index_img 資料夾載入
+        const backgroundImages = [
+            'index_img/index_bg1.jpg',
+            'index_img/index_bg2.jpg',
+            'index_img/index_bg3.jpg',
+            'index_img/index_bg4.jpg',
+            'index_img/index_bg5.jpg',
+            'index_img/index_bg7.jpg'
+            // 如果有更多圖片，繼續添加
+        ];
+
+        // 動態產生背景輪播元素
+        const slidesContainer = document.getElementById('background-slides-container');
+        const indicatorsContainer = document.getElementById('indicators-container');
+
+        backgroundImages.forEach((imagePath, index) => {
+            // 創建背景圖片元素
+            const slide = document.createElement('div');
+            slide.className = `background-slide${index === 0 ? ' active' : ''}`;
+            slide.style.backgroundImage = `url('${imagePath}')`;
+            slidesContainer.appendChild(slide);
+
+            // 創建指示器
+            const indicator = document.createElement('span');
+            indicator.className = `indicator${index === 0 ? ' active' : ''}`;
+            indicator.onclick = () => goToSlide(index);
+            indicatorsContainer.appendChild(indicator);
+        });
+
+        // 背景輪播功能
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.background-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            // 移除所有 active 類別
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+
+            // 添加 active 類別到當前項目
+            slides[index].classList.add('active');
+            indicators[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            showSlide(currentSlide);
+        }
+
+        // 自動輪播 - 每5秒切換一次
+        if (totalSlides > 0) {
+            setInterval(nextSlide, 5000);
+        }
+
+        // 圖片載入錯誤處理
+        slides.forEach((slide, index) => {
+            const img = new Image();
+            img.onerror = () => {
+                console.warn(`圖片載入失敗: ${backgroundImages[index]}`);
+                // 如果圖片載入失敗，使用預設的 SVG 背景
+                slide.style.backgroundImage = `url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"%3E%3Cdefs%3E%3ClinearGradient id="bg${index}" x1="0%25" y1="0%25" x2="0%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%2387CEEB"/%3E%3Cstop offset="50%25" style="stop-color:%23A8D5BA"/%3E%3Cstop offset="100%25" style="stop-color:%236B8E23"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23bg${index})" width="1920" height="1080"/%3E%3C/svg%3E')`;
+            };
+            img.src = backgroundImages[index];
+        });
+    </script>
+</body>
+</html>

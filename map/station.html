@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>景點詳細介紹</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+
+    <style>
+        body { background: #f4f4f4; padding: 20px; font-family: "Microsoft JhengHei", sans-serif; }
+        .container { max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        /* 主圖樣式 */
+        .main-spot-img { width: 100%; height: auto; border-radius: 5px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .back-btn { margin-bottom: 20px; }
+        .addr-line { font-size: 18px; color: #555; margin-bottom: 20px; }
+        .addr-line i { color: #dc3545; margin-right: 5px; }
+        
+        /* 照片牆小圖的樣式 */
+        .gallery-item {
+            display: block; /* 讓連結填滿 */
+            cursor: zoom-in; /* 滑鼠移過去變放大鏡 */
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .gallery-img { 
+            width: 100%; 
+            height: 200px; /* 固定高度，讓格子變整齊 */
+            object-fit: cover; /* 讓照片填滿格子不變形 */
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover .gallery-img { transform: scale(1.1); } 
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="javascript:window.close();" class="btn btn-outline-secondary back-btn">
+            &larr; 關閉視窗
+        </a>
+
+        <h1 class="font-weight-bold">竹崎車站 - 阿里山鐵路的經典小站</h1>
+        
+        <p class="addr-line">
+            <i class="fas fa-map-marker-alt"></i> 嘉義縣竹崎鄉竹崎村舊車站11號
+        <hr>
+
+        <img src="station.jpg" class="main-spot-img" alt="主照片">
+
+
+        <div class="content">
+            <h3>景點特色</h3>
+            <p>竹崎車站位於嘉義竹崎鄉，是阿里山林業鐵路的重要車站之一，兼具交通與旅遊功能。車站距嘉義起點14.2公里，海拔127公尺，在1946年1月竹崎車站因為老舊而重新翻修，成為今日所見的模樣，平日除了搭車民眾之外，也吸引不少情侶及準新人前來拍婚紗留念。車站建築保留傳統木造與鐵道元素，散發濃厚懷舊風情。旅客可從此出發前往阿里山或沿線各景點，也能在車站周邊散步、拍照，感受小鎮寧靜的氛圍，是喜愛鐵道文化的旅客必訪的景點。</p>
+            
+            <hr class="my-4"> 
+            
+            <h3 class="mb-3"><i class="fas fa-camera-retro"></i> 更多照片</h3>
+            <p class="text-muted small">點擊照片可放大檢視</p>
+            
+            <div class="row">
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="station1.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="station1.jpg" class="gallery-img" alt="照片說明1">
+                    </a>
+                </div>
+                
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="station2.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="station2.jpg" class="gallery-img" alt="照片說明2">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="station3.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="station3.jpg" class="gallery-img" alt="照片說明3">
+                    </a>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="station4.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="station4.jpg" class="gallery-img" alt="照片說明4">
+                    </a>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="station5.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="station5.jpg" class="gallery-img" alt="照片說明5">
+                    </a>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="station6.jpg" data-lightbox="park-gallery" data-title="車站前的可愛小羊" class="gallery-item">
+                        <img src="station6.jpg" class="gallery-img" alt="照片說明6">
+                    </a>
+                </div>
+                
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <strong><i class="fas fa-info-circle"></i> 小提醒：</strong>若要搭乘小火車，請注意車班時間，也請注意鐵道安全並留意天氣變化。
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+</body>
+</html>

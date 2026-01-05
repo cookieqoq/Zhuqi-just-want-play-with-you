@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>景點詳細介紹</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+
+    <style>
+        body { background: #f4f4f4; padding: 20px; font-family: "Microsoft JhengHei", sans-serif; }
+        .container { max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        /* 主圖樣式 */
+        .main-spot-img { width: 100%; height: auto; border-radius: 5px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .back-btn { margin-bottom: 20px; }
+        .addr-line { font-size: 18px; color: #555; margin-bottom: 20px; }
+        .addr-line i { color: #dc3545; margin-right: 5px; }
+        
+        /* 照片牆小圖的樣式 */
+        .gallery-item {
+            display: block; /* 讓連結填滿 */
+            cursor: zoom-in; /* 滑鼠移過去變放大鏡 */
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .gallery-img { 
+            width: 100%; 
+            height: 200px; /* 固定高度，讓格子變整齊 */
+            object-fit: cover; /* 讓照片填滿格子不變形 */
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover .gallery-img { transform: scale(1.1); } 
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="javascript:window.close();" class="btn btn-outline-secondary back-btn">
+            &larr; 關閉視窗
+        </a>
+
+        <h1 class="font-weight-bold">觀音瀑布 - 藏在深山的「飄雨谷」</h1>
+        
+        <p class="addr-line">
+            <i class="fas fa-map-marker-alt"></i> 嘉義縣竹崎鄉文峰村溪心寮44之1號
+        </p>
+        <hr>
+
+        <img src="fall.jpg" class="main-spot-img" alt="主照片">
+
+
+        <div class="content">
+            <h3>景點特色</h3>
+            <p>觀音瀑布位於朴子溪上游牛稠溪水系的支流，區內共有飛瀑8座，溪水自山崖頂端傾瀉而下，氣勢壯觀。遠看瀑布崖壁，形狀就像觀音側身而立、手持淨瓶灑水，因此得名「觀音瀑布」。前往瀑布需先至售票亭購票，由於通往第三層瀑布的通天坡步道嚴重毀損，目前僅開放至第二層瀑布區，門票也因此調整為優惠價格：一般民眾票價30元，65歲以上長者及12歲以下兒童可免費入園。購票後可選擇步行前往，約需30至40分鐘，或搭乘接駁車（單趟90元、來回180元）。不妨安排時間，親自走訪景色優美、氣氛清幽的觀音瀑布，感受大自然的魅力。</p>
+            
+            <hr class="my-4"> 
+            
+            <h3 class="mb-3"><i class="fas fa-camera-retro"></i> 更多照片</h3>
+            <p class="text-muted small">點擊照片可放大檢視</p>
+            
+            <div class="row">
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="fall1.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="fall1.jpg" class="gallery-img" alt="照片說明1">
+                    </a>
+                </div>
+                
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="fall2.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="fall2.jpg" class="gallery-img" alt="照片說明2">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="fall3.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="fall3.jpg" class="gallery-img" alt="照片說明3">
+                    </a>
+                </div>
+                
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <strong><i class="fas fa-info-circle"></i> 小提醒：</strong>營業時間為上午8時至下午4時。現場購票僅收取現金。旱季時水量不大，僅能看到涓涓細流。
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+</body>
+</html>

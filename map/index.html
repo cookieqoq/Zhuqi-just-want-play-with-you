@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>
+        竹崎地圖
+    </title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="../styles/game.css">
+    <link rel="icon" href="../images/logo.png" type="image/png">
+
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-top: 120px;
+        }
+
+        .mp-wrap {
+            display: flex;
+            height: calc(100vh - 120px);
+            position: relative;
+        }
+
+        .mp-aside {
+            width: 350px;
+            background: white;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ddd;
+            z-index: 2;
+        }
+
+        .mp-map {
+            flex-grow: 1;
+            background: #e9e9e9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .kf-search-unit {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .kf-search-unit-bar {
+            margin-bottom: 10px;
+        }
+
+        .kf-search-unit input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .map-list {
+            padding: 10px;
+        }
+
+        .map-list_item {
+            display: flex;
+            text-decoration: none;
+            color: #333;
+            background: #fff;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+
+            .map-list_item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            }
+
+        .kf-img {
+            width: 110px;
+            min-height: 120px;
+            flex-shrink: 0;
+            background: #eee;
+        }
+
+            .kf-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .map-list_body {
+            padding: 10px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-list_tit {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .map-addr-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+            .map-addr-text i {
+                margin-top: 3px;
+                margin-right: 5px;
+                color: #dc3545;
+            }
+
+        .btn-detail {
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            width: fit-content;
+            margin-top: auto;
+        }
+
+        .map-aside_foot {
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .filter-buttons {
+            padding: 0 10px 10px 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+            .filter-buttons button {
+                flex: 1;
+            }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 100px;
+            }
+
+            .mp-wrap {
+                flex-direction: column;
+                height: calc(100vh - 100px);
+            }
+
+            .mp-aside {
+                width: 100%;
+                height: 40vh;
+                order: 2;
+            }
+
+            .mp-map {
+                height: 60vh;
+                order: 1;
+            }
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="navbar-image-container">
+        <div class="navbar-overlay"></div>
+        <div class="navbar-content">
+            <a href="../index.html" class="navbar-brand-custom">竹想一崎玩 - 竹崎地圖</a>
+            <ul class="navbar-menu">
+                <li><a href="index.html">竹崎地圖</a></li>
+                <li><a href="https://bohuii.github.io/finalproject/">留言板</a></li>
+                <li><a href="../home.html#about">竹崎簡介</a></li>
+                <li><a href="../home.html#aboutUs">關於我們</a></li>
+                <li><a href="../game.html">遊戲導覽</a></li>
+            </ul>
+            <a href="../home.html" class="back-home-btn">返回首頁</a>
+        </div>
+    </div>
+
+    <div class="mp-wrap">
+        <div class="mp-aside">
+            <form class="kf-search-unit">
+                <div class="kf-search-unit-bar">
+                    <input id="SearchKeyword" type="text" placeholder="搜尋景點...">
+                </div>
+            </form>
+
+            <div class="filter-buttons">
+                <button type="button" id="btn-scenic" class="btn btn-sm btn-info">
+                    <i class="fas fa-mountain"></i> 景點
+                </button>
+                <button type="button" id="btn-food" class="btn btn-sm btn-warning text-white">
+                    <i class="fas fa-utensils"></i> 美食
+                </button>
+                <button type="button" id="cleanAll" class="btn btn-sm btn-secondary">
+                    全部
+                </button>
+            </div>
+            <div class="map-aside-content">
+                <div class="map-list"></div>
+            </div>
+            <div class="map-aside_foot">竹崎熱門景點與美食</div>
+        </div>
+        <div id="g-map" class="mp-map"></div>
+    </div>
+
+    <script>
+        var map;
+        var markers = {};
+        var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+        });
+
+        function initMap() {
+            map = L.map('g-map').setView([23.50, 120.6], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+        }
+
+        function addSpotByAddress(spot) {
+            var $listContainer = $('.map-list');
+
+            var btnHtml = '';
+            if (spot.link && spot.link !== '#') {
+                btnHtml = `
+                        <a href="${spot.link}" target="_blank" class="btn btn-outline-primary btn-sm btn-detail" onclick="event.stopPropagation();">
+                            詳細介紹 <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>`;
+            } else {
+                btnHtml = `<span class="text-muted" style="font-size:12px;">暫無介紹</span>`;
+            }
+
+            var badgeColor = "badge-danger";
+            if (spot.type === "美食") {
+                badgeColor = "badge-warning";
+            }
+
+            var listItemHTML = `
+                    <div id="${spot.id}" class="map-list_item" data-type="${spot.type}">
+                        <div class="kf-img">
+                            <img src="${spot.imgUrl}" alt="${spot.name}" onerror="this.src='https://placehold.co/100x100?text=No+Img'">
+                        </div>
+                        <div class="map-list_body">
+                            <span class="badge ${badgeColor}" style="width:fit-content; margin-bottom:5px;">${spot.type}</span>
+                            <div class="map-list_tit">${spot.name}</div>
+                            <div class="map-addr-text">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${spot.address_display}</span>
+                            </div>
+                            ${btnHtml}
+                        </div>
+                    </div>`;
+
+            $listContainer.append(listItemHTML);
+
+            if (spot.lat && spot.lng) {
+                var marker = L.marker([spot.lat, spot.lng], { icon: redIcon }).addTo(map)
+                    .bindPopup(`<b>${spot.name}</b><br>${spot.address_display}`);
+                markers[spot.id] = { marker: marker, lat: spot.lat, lon: spot.lng };
+                $(`#${spot.id}`).on('click', function () {
+                    map.flyTo([spot.lat, spot.lng], 16);
+                    marker.openPopup();
+                });
+            } else {
+                $.getJSON('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(spot.address_search), function (data) {
+                    if (data && data.length > 0) {
+                        var lat = data[0].lat;
+                        var lon = data[0].lon;
+                        var marker = L.marker([lat, lon], { icon: redIcon }).addTo(map)
+                            .bindPopup(`<b>${spot.name}</b><br>${spot.address_display}`);
+                        markers[spot.id] = { marker: marker, lat: lat, lon: lon };
+                        $(`#${spot.id}`).on('click', function () {
+                            map.flyTo([lat, lon], 16);
+                            marker.openPopup();
+                        });
+                    }
+                }).fail(function () {
+                    console.error('地理編碼請求失敗: ' + spot.name);
+                });
+            }
+        }
+
+        $(function () {
+            initMap();
+
+            var mySpots = [
+                { id: "spot_01", name: "竹崎親水公園", address_search: "竹崎親水公園", address_display: "嘉義縣竹崎鄉中華路", type: "景點", imgUrl: "park.jpg", link: "park.html" },
+                { id: "spot_02", name: "行千吊橋", address_search: "行千吊橋", address_display: "嘉義縣竹崎鄉中正路96號", type: "景點", imgUrl: "bridge.jpg", link: "bridge.html" },
+                { id: "spot_03", name: "觀音瀑布", address_search: "嘉義觀音瀑布", address_display: "嘉義縣竹崎鄉文峰村溪心寮44之1號", type: "景點", imgUrl: "fall.jpg", link: "fall.html" },
+                { id: "spot_04", name: "竹崎車站", address_search: "竹崎車站", address_display: "嘉義縣竹崎鄉竹崎村舊車站11號", type: "景點", imgUrl: "station.jpg", link: "station.html" },
+                { id: "spot_05", name: "左岸休閒小站", address_search: "竹崎鄉左岸休閒小站", address_display: "嘉義縣竹崎鄉復金村6之9號", lat: 23.526009639266025, lng: 120.5467074412227, type: "景點", imgUrl: "left.jpg", link: "left.html" },
+                { id: "spot_06", name: "奮起湖老街", address_search: "嘉義縣竹崎鄉中和村奮起湖", address_display: "嘉義縣竹崎鄉中和村奮起湖", type: "景點", imgUrl: "hu.jpg", link: "hu.html" },
+                { id: "spot_07", name: "奮起湖車站", address_search: "嘉義縣竹崎鄉中和村奮起湖103號", address_display: "嘉義縣竹崎鄉中和村奮起湖103號", lat: 23.505550266120366, lng: 120.69515091119744, type: "景點", imgUrl: "hustation.jpg", link: "hustation.html" },
+                { id: "spot_08", name: "竹崎外省麵", address_search: "嘉義縣竹崎鄉中華路176號", address_display: "嘉義縣竹崎鄉中華路176號", lat: 23.52218508814462, lng: 120.54820325167819, type: "美食", imgUrl: "noodle.jpg", link: "noodle.html" },
+                { id: "spot_09", name: "愛山屋～黑糖冰沙愛玉", address_search: "嘉義縣竹崎鄉107號", address_display: "嘉義縣竹崎鄉107號", lat: 23.504950312620263, lng: 120.69450356517119, type: "美食", imgUrl: "love.jpg", link: "love.html" },
+                { id: "spot_010", name: "揚揚甜甜圈", address_search: "嘉義縣竹崎鄉109號", address_display: "嘉義縣竹崎鄉109號", lat: 23.50473716025952, lng: 120.69458649510192, type: "美食", imgUrl: "yang.jpg", link: "yang.html" },
+                { id: "spot_011", name: "百年檜木甜甜圈", address_search: "嘉義縣竹崎鄉中和村奮起湖50-2號", address_display: "嘉義縣竹崎鄉中和村奮起湖50-2號", lat: 23.50374919278691, lng: 120.69501870123624, type: "美食", imgUrl: "year.jpg", link: "year.html" },
+                { id: "spot_012", name: "竹崎鹿滿客家文化園區", address_search: "竹崎鹿滿客家文化園區", address_display: "竹崎鹿滿客家文化園區", lat: 23.504595681240897, lng: 120.53140984313293, type: "景點", imgUrl: "home.jpg", link: "home.html" },
+                { id: "spot_013", name: "西施肉圓", address_search: "嘉義縣竹崎鄉和平村坑仔坪160-1號", address_display: "嘉義縣竹崎鄉和平村坑仔坪160-1號", lat: 23.51569942246545, lng: 120.54806536382135, type: "美食", imgUrl: "meat.jpg", link: "meat.html" },
+                { id: "spot_014", name: "老松牛肉麵", address_search: "嘉義縣竹崎鄉鹿滿麻箕埔段51之15號", address_display: "嘉義縣竹崎鄉鹿滿麻箕埔段51之15號", lat: 23.503042650685746, lng: 120.53742111762105, type: "美食", imgUrl: "beef.jpg", link: "beef.html" },
+                { id: "spot_015", name: "奮起湖大飯店-奮起湖便當", address_search: "嘉義縣竹崎鄉178-1號", address_display: "嘉義縣竹崎鄉178-1號", lat: 23.50553829769623, lng: 120.6954168786646, type: "美食", imgUrl: "bang.jpg", link: "bang.html" }
+            ];
+
+            var $listContainer = $('.map-list');
+            $listContainer.empty();
+
+            mySpots.forEach(function (spot, index) {
+                setTimeout(function () {
+                    addSpotByAddress(spot);
+                }, index * 200);
+            });
+
+            $('#btn-scenic').on('click', function () {
+                $('.map-list_item').hide();
+                $('.map-list_item').filter(function () {
+                    return $(this).find('.badge').text() === "景點";
+                }).show();
+            });
+
+            $('#btn-food').on('click', function () {
+                $('.map-list_item').hide();
+                $('.map-list_item').filter(function () {
+                    return $(this).find('.badge').text() === "美食";
+                }).show();
+            });
+
+            $('#SearchKeyword').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $(".map-list_item").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+            $('#cleanAll').on('click', function () {
+                $('#SearchKeyword').val('');
+                $(".map-list_item").show();
+            });
+
+            console.log('✅ 竹崎地圖已載入完成');
+            console.log(`📍 顯示 ${mySpots.length} 個景點（${mySpots.filter(s => s.type === '景點').length} 個景點 + ${mySpots.filter(s => s.type === '美食').length} 個美食）`);
+            console.log('🎬 導覽列背景圖片輪播功能已啟用（使用自訂圖片）');
+        });
+    </script>
+
+    <!-- ==================== 自訂導覽列背景圖片 ==================== -->
+    <script>
+        // 在載入 navbar-carousel.js 之前覆蓋圖片設定
+        (function () {
+            // 自訂地圖頁面專用的背景圖片
+            const customNavbarImages = [
+                '../index_img/index_bg3.jpg',
+                '../index_img/index_bg2.jpg',    // 或使用 index_img 中的圖片
+                '../index_img/index_bg1.jpg'
+            ];
+
+            let currentIndex = 0;
+            let navbarContainer = null;
+            let intervalId = null;
+
+            function initCustomCarousel() {
+                navbarContainer = document.querySelector('.navbar-image-container');
+
+                if (!navbarContainer) {
+                    console.warn('⚠️ 找不到導覽列容器');
+                    return;
+                }
+
+                // 設定初始背景
+                if (customNavbarImages.length > 0) {
+                    navbarContainer.style.backgroundImage = `url('${customNavbarImages[0]}')`;
+                    navbarContainer.style.backgroundSize = 'cover';
+                    navbarContainer.style.backgroundPosition = 'center';
+                    navbarContainer.style.transition = 'background-image 0.5s ease-in-out';
+                }
+
+                // 啟動輪播（每 10 秒切換）
+                if (customNavbarImages.length > 1) {
+                    intervalId = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % customNavbarImages.length;
+                        navbarContainer.style.backgroundImage = `url('${customNavbarImages[currentIndex]}')`;
+                    }, 10000);
+                }
+
+                console.log(`✅ 地圖頁面導覽列輪播已啟動，共 ${customNavbarImages.length} 張圖片`);
+            }
+
+            // 頁面載入時初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCustomCarousel);
+            } else {
+                initCustomCarousel();
+            }
+        })();
+    </script>
+</body>
+</html>

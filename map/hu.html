@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>景點詳細介紹</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+
+    <style>
+        body { background: #f4f4f4; padding: 20px; font-family: "Microsoft JhengHei", sans-serif; }
+        .container { max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        /* 主圖樣式 */
+        .main-spot-img { width: 100%; height: auto; border-radius: 5px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .back-btn { margin-bottom: 20px; }
+        .addr-line { font-size: 18px; color: #555; margin-bottom: 20px; }
+        .addr-line i { color: #dc3545; margin-right: 5px; }
+        
+        /* 照片牆小圖的樣式 */
+        .gallery-item {
+            display: block; /* 讓連結填滿 */
+            cursor: zoom-in; /* 滑鼠移過去變放大鏡 */
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .gallery-img { 
+            width: 100%; 
+            height: 200px; /* 固定高度，讓格子變整齊 */
+            object-fit: cover; /* 讓照片填滿格子不變形 */
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover .gallery-img { transform: scale(1.1); } 
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="javascript:window.close();" class="btn btn-outline-secondary back-btn">
+            &larr; 關閉視窗
+        </a>
+
+        <h1 class="font-weight-bold">奮起湖老街 - 美食與歷史交織的最高老街</h1>
+        
+        <p class="addr-line">
+            <i class="fas fa-map-marker-alt"></i> 嘉義縣竹崎鄉中和村奮起湖
+        <hr>
+
+        <img src="hu.jpg" class="main-spot-img" alt="主照片">
+
+
+        <div class="content">
+            <h3>景點特色</h3>
+            <p>奮起湖有「南台灣九份」的美稱，老街街景便是其一大特色。奮起湖老街是阿里山林業鐵路沿線著名的旅遊景點之一，亦是台灣海拔最高的老街。老街依山而建，保留許多傳統木造建築，充滿懷舊氛圍。街道上聚集各式小吃與伴手禮，例如當地便當、豆腐和糕餅等美食，總是吸引不少遊客前來品嚐。奮起湖老街的特產豐富多元，除了知名的便當外，傳統糕餅與米食更是遊客最想一嚐的美味。像是「德銘餅舖」的公婆餅、大餅、草仔粿，以及添加茶香豆沙餡、外皮烙印火車模型的「火車餅」，還有茶葉鐵蛋、「便當世家」的便當酥（山芋酥餅）等，另外，火車頭、神木、森林古道一同成為奮起湖的代表景象。除了美食，老街上也保留了許多古早用品，例如阿嬤時代使用的面霜、老百貨鋪裡的童裝、衣褲、針線等，讓人彷彿穿越時光，感受昔日山城生活的氛圍。</p>
+            
+            <hr class="my-4"> 
+            
+            <h3 class="mb-3"><i class="fas fa-camera-retro"></i> 更多照片</h3>
+            <p class="text-muted small">點擊照片可放大檢視</p>
+            
+            <div class="row">
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="hu1.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="hu1.jpg" class="gallery-img" alt="照片說明1">
+                    </a>
+                </div>
+                
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="hu2.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="hu2.jpg" class="gallery-img" alt="照片說明2">
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="hu3.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="hu3.jpg" class="gallery-img" alt="照片說明3">
+                    </a>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="hu4.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="hu4.jpg" class="gallery-img" alt="照片說明4">
+                    </a>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="hu5.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="hu5.jpg" class="gallery-img" alt="照片說明5">
+                    </a>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <a href="hu6.jpg" data-lightbox="park-gallery" data-title="" class="gallery-item">
+                        <img src="hu6.jpg" class="gallery-img" alt="照片說明6">
+                    </a>
+                </div>
+                
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <strong><i class="fas fa-info-circle"></i> 小提醒：</strong>山上天氣較冷，要穿多一點，注意保暖！
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+</body>
+</html>

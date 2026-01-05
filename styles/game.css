@@ -1,0 +1,168 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    /* 為固定導覽列添加頂部內距 - 需與導覽列高度一致 */
+    padding-top: 120px; /* 從 200px 改為 120px */
+}
+
+/* 導覽列圖片容器 - 固定位置 */
+.navbar-image-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px; /* 從 200px 改為 120px */
+    background-image: url('../index_img/index_bg1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+/* 導覽列遮罩層 */
+.navbar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+    z-index: 1;
+}
+
+/* 導覽列內容層 */
+.navbar-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo/品牌樣式 */
+.navbar-brand-custom {
+    font-size: 28px; /* 從 32px 稍微縮小 */
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+    .navbar-brand-custom:hover {
+        opacity: 0.8;
+        color: white;
+    }
+
+/* 導覽選單 */
+.navbar-menu {
+    display: flex;
+    gap: 25px; /* 從 30px 稍微縮小 */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .navbar-menu li {
+        margin: 0;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .navbar-menu a {
+        color: white;
+        font-size: 16px; /* 從 18px 稍微縮小 */
+        font-weight: 500;
+        text-decoration: none;
+        padding: 8px 18px; /* 從 10px 20px 稍微縮小 */
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+        white-space: nowrap;
+    }
+
+        /* 只在滑鼠懸停時觸發效果 */
+        .navbar-menu a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+/* 返回首頁按鈕 */
+.back-home-btn {
+    background: linear-gradient(135deg, #6B8E23, #9ACD32);
+    color: white;
+    border: none;
+    padding: 8px 22px; /* 從 10px 25px 稍微縮小 */
+    border-radius: 25px;
+    font-size: 15px; /* 從 16px 稍微縮小 */
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+
+    .back-home-btn:hover {
+        background: linear-gradient(135deg, #556B2F, #6B8E23);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    }
+
+/* 遊戲容器 */
+.game-container {
+    background-color: #000;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 主要內容區 - 確保不被導覽列遮擋 */
+.main-content {
+    min-height: calc(100vh - 120px); /* 從 200px 改為 120px */
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    body {
+        padding-top: 100px; /* 從 150px 調整 */
+    }
+
+    .navbar-image-container {
+        height: 100px; /* 從 150px 調整 */
+        padding: 0 20px;
+    }
+
+    .navbar-brand-custom {
+        font-size: 20px; /* 從 24px 調整 */
+    }
+
+    .navbar-menu {
+        flex-direction: column;
+        gap: 8px; /* 從 10px 調整 */
+    }
+
+        .navbar-menu a {
+            font-size: 14px;
+            padding: 6px 15px; /* 從 8px 15px 調整 */
+        }
+
+    .navbar-content {
+        flex-direction: column;
+        gap: 12px; /* 從 15px 調整 */
+        padding: 15px 0; /* 從 20px 調整 */
+    }
+}

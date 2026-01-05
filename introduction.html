@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竹崎3D遊戲導覽</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/game.css">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <style>
+        .intro-content {
+            border: 4px solid #333;
+            border-radius: 20px;
+            padding: 20px;
+            line-height: 2;
+            font-size: 16px;
+            margin: 30px 0;
+            background: white;
+        }
+
+        /* 雪花圖片樣式 */
+        .snowflake {
+            position: fixed;
+            top: -50px; /* 因為圖片比較大，起始點要更上面一點 */
+            z-index: -1;
+            user-select: none;
+            pointer-events: none; /* 讓滑鼠可以穿透圖片 */
+            /* 關鍵：加上陰影，不然白雪在淺色地圖上會看不到 */
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+            animation-name: fall;
+            animation-timing-function: linear;
+            animation-fill-mode: forwards;
+        }
+
+        /* 讓雪花除了往下掉，還帶一點旋轉效果，比較自然 */
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.5; /* 進場淡入 */
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(360deg); /* 掉到底部並旋轉一圈 */
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 導覽列圖片容器 -->
+    <div class="navbar-image-container">
+        <!-- 遮罩層 -->
+        <div class="navbar-overlay"></div>
+
+        <!-- 導覽內容 -->
+        <div class="navbar-content">
+            <!-- Logo/品牌 -->
+            <a href="index.html" class="navbar-brand-custom">竹崎3D遊戲導覽</a>
+
+            <!-- 導覽選單 -->
+            <ul class="navbar-menu">
+                <li><a href="mapIndex.html">竹崎地圖</a></li>
+                <li><a href="https://bohuii.github.io/finalproject/">留言板</a></li>
+                <li><a href="introduction.html">竹崎簡介</a></li>
+                <li><a href="home.html#aboutUs">關於我們</a></li>
+                <li><a href="game.html">遊戲導覽</a></li>
+            </ul>
+
+            <!-- 返回首頁按鈕 -->
+            <a href="home.html" class="back-home-btn">返回首頁</a>
+        </div>
+    </div>
+
+    <!-- 主要內容區 -->
+    <div id="intro-page" class="content-page" style="z-index:1">
+        <div class="message-header">
+            <h1 class="page-title">竹崎簡介</h1>
+        </div>
+        <p style="margin-bottom: 20px; line-height: 1.8;">介紹竹崎地區的歷史背景、自然景觀與人文特色，帶領使用者了解竹崎的風貌與地方魅力，體驗山林與鐵道文化的結合之美</p>
+
+        <div class="intro-content">
+            <p>
+                如今在大街小巷的便利商店裡都買得到的奮起湖便當，就是來自竹崎鄉。而提到奮起湖，自然不能不提阿里山森林鐵路。
+                小火車從嘉義市開出，到了竹崎開始爬昇；這條高齡百歲的鐵路，有三分之二是在竹崎鄉境內，沿途林相豐富、變化萬千
+                ，穿越熱、暖帶，獨立山的螺旋環行路徑、Z字型倒車上山，至今仍是舉世無雙的工程奇蹟。
+            </p>
+            <p>
+                位居鐵路中繼站的奮起湖風景區，昔稱畚箕湖。清早乘車上山，到這兒剛好是午餐時間，短暫的進站時間，正好買個便當路上果腹。
+                極盛時期，曾經每天要賣二千多個便當，也因此造就了這個「便當王國」。
+            </p>
+            <p>
+                除了便當之外，老街上小吃雲集，火車餅、草仔粿、便當酥等美味，同樣令人心滿口足。即使不打算直達鐵道終點，鐵路沿線的每一站，也都各自藏有珍貴的山林景觀，等待有心人的探訪──樟腦寮站附近的獨立山古道、寂靜的交力坪小站、群山圍繞的小型聚落水社寮，各有意趣。
+                而如果就在奮起湖站下車，由於這裡是八掌溪的源頭，境內有不少原始林、動植物生態，以及奇峰峻嶺、岩洞天塹，沿著古道漫步林間，彷彿感覺與山林一同脈動、一同呼吸。沿著阿里山鐵路，便能盡覽竹崎的精華。
+            </p>
+
+        </div>
+
+        <div class="intro-image">
+            
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+       
+        const snowImageSrc = 'images/introduction.png';
+
+        function createSnowflake() {
+            const snowflake = document.createElement('img'); // 改用 img 標籤
+            snowflake.src = snowImageSrc;
+            snowflake.classList.add('snowflake');
+
+            // 1. 隨機水平位置
+            snowflake.style.left = Math.random() * 100 + 'vw';
+
+            // 2. 隨機大小 (圖片寬度 10px ~ 30px)
+            const size = Math.random() * 20 + 10;
+            snowflake.style.width = size + 'px';
+
+            // 3. 隨機飄落時間 (速度)
+            const duration = Math.random() * 3 + 3; // 3~6秒
+            snowflake.style.animationDuration = duration + 's';
+
+            // 4. 隨機透明度
+            snowflake.style.opacity = Math.random() * 0.5 + 0.5; // 0.5 ~ 1.0
+
+            document.body.appendChild(snowflake);
+
+            // 時間到後移除
+            setTimeout(() => {
+                snowflake.remove();
+            }, duration * 1000);
+        }
+
+        // 啟動下雪 (每 200 毫秒產生一片)
+        setInterval(createSnowflake, 200);
+    </script>
+    <!-- 導覽列輪播功能 -->
+    <script src="scripts/navbar-carousel.js"></script>
+</body>
+</html>
