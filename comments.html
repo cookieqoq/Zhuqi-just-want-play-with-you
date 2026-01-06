@@ -3,68 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>留言板</title>
-    <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; margin: 0; }
-        h1 { color: #1c1e21; margin-bottom: 30px; }
-        .container { width: 100%; max-width: 600px; }
-        .top-bar { display: flex; justify-content: flex-end; margin-bottom: 15px; }
-        .btn { background-color: #007bff; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn:hover { background-color: #0056b3; }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        .card { border-radius: 12px; padding: 20px; margin-bottom: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: relative; }
-        textarea { width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 8px; padding: 12px; outline: none; resize: none; font-size: 16px; margin-top: 10px; box-sizing: border-box; }
-        
-        /* 圖片樣式與防破圖 */
-        .post-img { max-width: 100%; border-radius: 8px; margin: 15px 0; display: block; background-color: white; }
-        .post-img[src="null"], .post-img[src=""], .post-img:not([src]) { display: none !important; }
-        
-        #preViewContainer { position: relative; margin-top: 15px; display: none; }
-        #preView { max-width: 100%; border-radius: 8px; display: block; border: 1px solid #eee; background-color: white; }
-        #cancelImg { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; }
+    <title>留言板 - 竹崎導覽</title>
 
-        .footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #65676b; margin-top: 12px; }
-        .action-links { display: flex; gap: 15px; }
-        .del-text { cursor: pointer; color: #d93025; font-weight: bold; }
-        .edit-text { cursor: pointer; color: #1877f2; font-weight: bold; }
-        .my-tag { background: #e7f3ff; color: #1877f2; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 8px; }
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 通用樣式 -->
+    <link rel="stylesheet" href="styles/game.css">
+    <!-- 網站圖標 -->
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <!-- 遊戲重定向腳本 -->
+    <script src="scripts/game-redirect.js"></script>
+
+    <style>
+        /* 頁面整體樣式 */
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 主要內容容器 */
+        .comments-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* 標題區塊 */
+        .comments-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+            .comments-header h1 {
+                color: #2c3e50;
+                font-size: 2rem;
+                font-weight: bold;
+                margin: 0;
+            }
+
+            .comments-header .subtitle {
+                color: #7f8c8d;
+                font-size: 1rem;
+                margin-top: 8px;
+            }
+
+        /* 頂部操作列 */
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        /* 按鈕樣式 */
+        .btn {
+            background: linear-gradient(135deg, #6B8E23, #9ACD32);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+            .btn:hover {
+                background: linear-gradient(135deg, #556B2F, #6B8E23);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            }
+
+            .btn:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+
+            .btn-secondary:hover {
+                background: linear-gradient(135deg, #5a6268, #4e555b);
+            }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #218838);
+        }
+
+            .btn-success:hover {
+                background: linear-gradient(135deg, #218838, #1e7e34);
+            }
+
+        /* 卡片樣式 */
+        .card {
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+
+            .card h3 {
+                color: #2c3e50;
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+
+        /* 文字輸入框 */
+        textarea {
+            width: 100%;
+            height: 120px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            outline: none;
+            resize: none;
+            font-size: 16px;
+            margin-top: 15px;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+            textarea:focus {
+                border-color: #6B8E23;
+                box-shadow: 0 0 0 3px rgba(107, 142, 35, 0.1);
+            }
+
+        /* 圖片樣式與防破圖 */
+        .post-img {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 15px 0;
+            display: block;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+            .post-img[src="null"],
+            .post-img[src=""],
+            .post-img:not([src]) {
+                display: none !important;
+            }
+
+        /* 圖片預覽容器 */
+        #preViewContainer {
+            position: relative;
+            margin-top: 15px;
+            display: none;
+        }
+
+        #preView {
+            max-width: 100%;
+            border-radius: 12px;
+            display: block;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        #cancelImg {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+            #cancelImg:hover {
+                background: rgba(200, 35, 51, 1);
+                transform: scale(1.1);
+            }
+
+        /* 底部資訊列 */
+        .footer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #65676b;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* 操作連結 */
+        .action-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .del-text {
+            cursor: pointer;
+            color: #dc3545;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+            .del-text:hover {
+                color: #c82333;
+                text-decoration: underline;
+            }
+
+        .edit-text {
+            cursor: pointer;
+            color: #6B8E23;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+            .edit-text:hover {
+                color: #556B2F;
+                text-decoration: underline;
+            }
+
+        /* 標籤樣式 */
+        .my-tag {
+            background: linear-gradient(135deg, #e7f3ff, #c3e0ff);
+            color: #0066cc;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
+        /* 留言內容文字 */
+        .post-text {
+            white-space: pre-wrap;
+            font-size: 17px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* 空狀態提示 */
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+            .empty-state i {
+                font-size: 3rem;
+                color: #ddd;
+                margin-bottom: 15px;
+            }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .comments-container {
+                padding: 0 15px;
+            }
+
+            .comments-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- 通用導覽列 -->
+    <div class="navbar-image-container">
+        <!-- 遮罩層 -->
+        <div class="navbar-overlay"></div>
 
-    <h1>留言板</h1>
+        <!-- 導覽內容 -->
+        <div class="navbar-content">
+            <!-- Logo/品牌 -->
+            <a href="index.html" class="navbar-brand-custom">竹想一崎玩 - 留言板</a>
 
-    <div class="container">
+            <!-- 導覽選單 -->
+            <ul class="navbar-menu">
+                <li><a href="map/index.html">竹崎地圖</a></li>
+                <li><a href="comments.html">留言板</a></li>
+                <li><a href="introduction.html">竹崎簡介</a></li>
+                <li><a href="we/we.html">關於我們</a></li>
+                <li><a href="game.html">遊戲導覽</a></li>
+            </ul>
+
+            <!-- 返回首頁按鈕 -->
+            <a href="home.html" class="back-home-btn">返回首頁</a>
+        </div>
+    </div>
+
+    <!-- 主要內容區 -->
+    <div class="comments-container">
+        <!-- 標題區塊 -->
+        <div class="comments-header">
+            <h1><i class="fas fa-comments"></i> 留言板</h1>
+            <p class="subtitle">分享您的竹崎旅遊心得與美好回憶</p>
+        </div>
+
+        <!-- 瀏覽留言區 -->
         <section id="viewSection">
-            <div class="top-bar"><button class="btn" onclick="openAddPage()">新增留言</button></div>
-            <div id="msgList">讀取雲端資料中...</div>
+            <div class="top-bar">
+                <button class="btn" onclick="openAddPage()">
+                    <i class="fas fa-plus-circle"></i> 新增留言
+                </button>
+            </div>
+            <div id="msgList">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>讀取雲端資料中...</p>
+                </div>
+            </div>
         </section>
 
+        <!-- 新增/編輯留言區 -->
         <section id="addSection" style="display: none;">
-            <div class="top-bar"><button class="btn" style="background:#6c757d" onclick="goPage('view')">上一頁</button></div>
+            <div class="top-bar">
+                <button class="btn btn-secondary" onclick="goPage('view')">
+                    <i class="fas fa-arrow-left"></i> 上一頁
+                </button>
+            </div>
             <div class="card">
-                <h3 id="formTitle">新增留言</h3>
+                <h3 id="formTitle"><i class="fas fa-edit"></i> 新增留言</h3>
+
                 <input type="file" id="imgInput" accept="image/*" style="display:none">
-                <button class="btn" style="background:#28a745" onclick="document.getElementById('imgInput').click()">選擇照片</button>
-                
+                <button class="btn btn-success" onclick="document.getElementById('imgInput').click()">
+                    <i class="fas fa-image"></i> 選擇照片
+                </button>
+
                 <div id="preViewContainer">
-                    <img id="preView">
+                    <img id="preView" alt="圖片預覽">
                     <button id="cancelImg" title="清除照片">✕</button>
                 </div>
-                
+
                 <textarea id="msgContent" placeholder="寫下你的心情..."></textarea>
-                <div style="text-align: right; margin-top: 15px;">
-                    <button class="btn" id="submitBtn" onclick="doUpload()">確認發布</button>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="btn" id="submitBtn" onclick="doUpload()">
+                        <i class="fas fa-paper-plane"></i> 確認發布
+                    </button>
                 </div>
             </div>
         </section>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Firebase 與留言板功能 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- 你的 Firebase 設定 ---
+        // Firebase 設定
         const firebaseConfig = {
             apiKey: "AIzaSyBMuONqbs2YVqZ8Q_ai7efQun59JPyt9eE",
             authDomain: "finalproject-bd5a0.firebaseapp.com",
@@ -76,7 +398,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const ADMIN_KEY = "admin888"; 
+        const ADMIN_KEY = "admin888";
         let currentEditID = null;
 
         if (!localStorage.getItem('myUserID')) {
@@ -92,18 +414,18 @@
         window.goPage = (p) => {
             document.getElementById('viewSection').style.display = (p === 'add' ? 'none' : 'block');
             document.getElementById('addSection').style.display = (p === 'add' ? 'block' : 'none');
-            if(p === 'view') resetForm();
+            if (p === 'view') resetForm();
         };
 
         window.openAddPage = () => {
             currentEditID = null;
-            document.getElementById('formTitle').innerText = "新增留言";
-            document.getElementById('submitBtn').innerText = "確認發布";
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> 新增留言';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> 確認發布';
             resetForm();
             goPage('add');
         };
 
-        imgInput.addEventListener('change', function(e) {
+        imgInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -115,7 +437,7 @@
             }
         });
 
-        cancelBtn.addEventListener('click', function() {
+        cancelBtn.addEventListener('click', function () {
             imgInput.value = "";
             preView.src = "";
             preViewContainer.style.display = 'none';
@@ -134,13 +456,12 @@
             const btn = document.getElementById('submitBtn');
 
             if (!txt && !file && !preView.src) return alert("請輸入內容或選取照片");
-            
-            btn.disabled = true; 
-            btn.innerText = "連線中...";
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 連線中...';
 
             try {
                 let imgFinal = null;
-                // 檢查是否有現有的編輯圖
                 if (preView.style.display !== 'none' && preView.src.startsWith('data:image')) {
                     imgFinal = preView.src;
                 }
@@ -156,12 +477,11 @@
                                 if (w > 800) { h *= 800 / w; w = 800; }
                                 canvas.width = w; canvas.height = h;
                                 const ctx = canvas.getContext('2d');
-                                
-                                // 修正背景變黑：塗滿白色
+
                                 ctx.fillStyle = "#FFFFFF";
                                 ctx.fillRect(0, 0, w, h);
                                 ctx.drawImage(img, 0, 0, w, h);
-                                
+
                                 resolve(canvas.toDataURL('image/jpeg', 0.6));
                             };
                             img.src = e.target.result;
@@ -173,7 +493,7 @@
                 if (currentEditID) {
                     await updateDoc(doc(db, "posts", currentEditID), {
                         txt: txt,
-                        imgData: imgFinal, 
+                        imgData: imgFinal,
                         lastEdit: new Date().toLocaleString()
                     });
                 } else {
@@ -188,50 +508,69 @@
                 goPage('view');
             } catch (e) {
                 console.error(e);
-                alert("操作失敗，請確認 Firestore 規則已發佈為 true");
+                alert("操作失敗，請確認網路連線或 Firestore 設定");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "確認發布";
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> 確認發布';
             }
         };
 
         onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc")), (snap) => {
             const list = document.getElementById('msgList');
-            list.innerHTML = snap.empty ? '<p style="text-align:center;color:#999;">目前尚無留言</p>' : '';
-            
+
+            if (snap.empty) {
+                list.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>目前尚無留言</p>
+                                <p style="font-size: 14px; color: #bbb;">成為第一個分享心情的人吧！</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            list.innerHTML = '';
+
             snap.forEach((d) => {
                 const item = d.data();
                 const isMe = (item.authorID === currentUserID);
-                
-                // 嚴格檢查 Base64 格式，防止破圖
+
                 const hasImg = item.imgData && item.imgData.startsWith('data:image');
-                const imgHtml = hasImg ? `<img src="${item.imgData}" class="post-img">` : '';
+                const imgHtml = hasImg ? `<img src="${item.imgData}" class="post-img" alt="留言圖片">` : '';
 
                 const actionsHtml = isMe ? `
-                    <div class="action-links">
-                        <span class="edit-text" onclick="prepareEdit('${d.id}', \`${item.txt}\`, '${item.imgData || ''}')">編輯</span>
-                        <span class="del-text" onclick="deletePost('${d.id}', '${item.authorID}')">刪除</span>
-                    </div>
-                ` : '';
+                            <div class="action-links">
+                                <span class="edit-text" onclick="prepareEdit('${d.id}', \`${item.txt}\`, '${item.imgData || ''}')">
+                                    <i class="fas fa-edit"></i> 編輯
+                                </span>
+                                <span class="del-text" onclick="deletePost('${d.id}', '${item.authorID}')">
+                                    <i class="fas fa-trash-alt"></i> 刪除
+                                </span>
+                            </div>
+                        ` : '';
 
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
-                    <p style="white-space:pre-wrap;font-size:17px;">${item.txt}</p>
-                    ${imgHtml}
-                    <div class="footer-info">
-                        <span>${item.time}${isMe ? '<span class="my-tag">本人</span>' : ''} ${item.lastEdit ? '(已編輯)' : ''}</span>
-                        ${actionsHtml}
-                    </div>
-                `;
+                            <p class="post-text">${item.txt}</p>
+                            ${imgHtml}
+                            <div class="footer-info">
+                                <span>
+                                    <i class="far fa-clock"></i> ${item.time}
+                                    ${isMe ? '<span class="my-tag">本人</span>' : ''}
+                                    ${item.lastEdit ? '<span style="color:#999;">(已編輯)</span>' : ''}
+                                </span>
+                                ${actionsHtml}
+                            </div>
+                        `;
                 list.appendChild(div);
             });
         });
 
         window.prepareEdit = (id, txt, img) => {
             currentEditID = id;
-            document.getElementById('formTitle').innerText = "編輯留言";
-            document.getElementById('submitBtn').innerText = "儲存修改";
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-pen"></i> 編輯留言';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> 儲存修改';
             document.getElementById('msgContent').value = txt;
             if (img && img.startsWith('data:image')) {
                 preView.src = img;
@@ -244,10 +583,18 @@
         };
 
         window.deletePost = async (id, authorID) => {
-            const pwd = (authorID === currentUserID) ? (confirm("確定刪除？") ? ADMIN_KEY : null) : prompt("請輸入管理員密碼：");
-            if (pwd === ADMIN_KEY) await deleteDoc(doc(db, "posts", id));
-            else if (pwd !== null) alert("密碼錯誤");
+            const pwd = (authorID === currentUserID) ? (confirm("確定刪除此留言？") ? ADMIN_KEY : null) : prompt("請輸入管理員密碼：");
+            if (pwd === ADMIN_KEY) {
+                await deleteDoc(doc(db, "posts", id));
+            } else if (pwd !== null) {
+                alert("密碼錯誤");
+            }
         };
+
+        console.log('✅ 留言板已載入完成');
     </script>
+
+    <!-- 導覽列背景輪播腳本 -->
+    <script src="scripts/navbar-carousel.js"></script>
 </body>
 </html>
