@@ -17,19 +17,20 @@
     <script src="scripts/game-redirect.js"></script>
 
     <style>
-        /* 頁面整體樣式 */
+        /* 頁面整體樣式 - 確保有足夠的上方間距 */
         body {
             font-family: "Microsoft JhengHei", sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            margin: 0;
-            padding: 0;
+            /* 保留 game.css 的 padding-top，不覆蓋 */
         }
 
-        /* 主要內容容器 */
+        /* 主要內容容器 - 確保不被導覽列遮擋 */
         .comments-container {
             max-width: 700px;
-            margin: 40px auto;
+            margin: 0 auto;
             padding: 0 20px;
+            padding-top: 20px; /* 額外的上方間距 */
+            padding-bottom: 40px; /* 底部間距 */
         }
 
         /* 標題區塊 */
@@ -282,6 +283,8 @@
         @media (max-width: 768px) {
             .comments-container {
                 padding: 0 15px;
+                padding-top: 20px; /* 手機版保持上方間距 */
+                padding-bottom: 40px;
             }
 
             .comments-header h1 {
@@ -316,7 +319,7 @@
                 <li><a href="comments.html">留言板</a></li>
                 <li><a href="introduction.html">竹崎簡介</a></li>
                 <li><a href="we/we.html">關於我們</a></li>
-                <li><a href="game.html">遊戲導覽</a></li>
+                <li><a href="successPlz/index.html">遊戲導覽</a></li>
             </ul>
 
             <!-- 返回首頁按鈕 -->
@@ -520,12 +523,12 @@
 
             if (snap.empty) {
                 list.innerHTML = `
-                            <div class="empty-state">
-                                <i class="fas fa-comment-slash"></i>
-                                <p>目前尚無留言</p>
-                                <p style="font-size: 14px; color: #bbb;">成為第一個分享心情的人吧！</p>
-                            </div>
-                        `;
+                        <div class="empty-state">
+                            <i class="fas fa-comment-slash"></i>
+                            <p>目前尚無留言</p>
+                            <p style="font-size: 14px; color: #bbb;">成為第一個分享心情的人吧！</p>
+                        </div>
+                    `;
                 return;
             }
 
@@ -539,30 +542,30 @@
                 const imgHtml = hasImg ? `<img src="${item.imgData}" class="post-img" alt="留言圖片">` : '';
 
                 const actionsHtml = isMe ? `
-                            <div class="action-links">
-                                <span class="edit-text" onclick="prepareEdit('${d.id}', \`${item.txt}\`, '${item.imgData || ''}')">
-                                    <i class="fas fa-edit"></i> 編輯
-                                </span>
-                                <span class="del-text" onclick="deletePost('${d.id}', '${item.authorID}')">
-                                    <i class="fas fa-trash-alt"></i> 刪除
-                                </span>
-                            </div>
-                        ` : '';
+                        <div class="action-links">
+                            <span class="edit-text" onclick="prepareEdit('${d.id}', \`${item.txt}\`, '${item.imgData || ''}')">
+                                <i class="fas fa-edit"></i> 編輯
+                            </span>
+                            <span class="del-text" onclick="deletePost('${d.id}', '${item.authorID}')">
+                                <i class="fas fa-trash-alt"></i> 刪除
+                            </span>
+                        </div>
+                    ` : '';
 
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
-                            <p class="post-text">${item.txt}</p>
-                            ${imgHtml}
-                            <div class="footer-info">
-                                <span>
-                                    <i class="far fa-clock"></i> ${item.time}
-                                    ${isMe ? '<span class="my-tag">本人</span>' : ''}
-                                    ${item.lastEdit ? '<span style="color:#999;">(已編輯)</span>' : ''}
-                                </span>
-                                ${actionsHtml}
-                            </div>
-                        `;
+                        <p class="post-text">${item.txt}</p>
+                        ${imgHtml}
+                        <div class="footer-info">
+                            <span>
+                                <i class="far fa-clock"></i> ${item.time}
+                                ${isMe ? '<span class="my-tag">本人</span>' : ''}
+                                ${item.lastEdit ? '<span style="color:#999;">(已編輯)</span>' : ''}
+                            </span>
+                            ${actionsHtml}
+                        </div>
+                    `;
                 list.appendChild(div);
             });
         });
