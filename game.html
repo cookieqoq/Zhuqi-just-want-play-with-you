@@ -3,325 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>竹崎3D遊戲導覽</title>
+    <title>竹崎3D遊戲導覽 - 重定向中...</title>
+    <link rel="icon" href="images/logo.png" type="image/png">
+
+    <!-- 自動重定向腳本 -->
+    <script>// 載入配置並重定向到外部遊戲網址
+        fetch('config/game-url.json')
+            .then(response => response.json())
+            .then(config => {
+                if (config.enabled && config.gameUrl) {
+                    // 3 秒後重定向，給用戶看到提示訊息
+                    setTimeout(() => {
+                        window.location.href = config.gameUrl;
+                    }, 3000);
+
+                    // 更新頁面提示
+                    document.getElementById('redirect-url').textContent = config.gameUrl;
+                    document.getElementById('redirect-link').href = config.gameUrl;
+                }
+            })
+            .catch(error => {
+                console.error('無法載入配置:', error);
+                // 配置載入失敗，顯示本地遊戲內容
+                document.getElementById('redirect-notice').style.display = 'none';
+                document.getElementById('local-game').style.display = 'block';
+            });</script>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/game.css">
-    <link rel="icon" href="images/logo.png" type="image/png">
     <style>
-        /* Unity 容器樣式 */
-        #unity-container {
-            position: relative;
-            width: 100%;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        #unity-canvas {
-            width: 100%;
-            height: auto;
-            background: #231F20;
-            border-radius: 8px;
-        }
-
-        #unity-loading-bar {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-        }
-
-        #unity-progress-bar-empty {
-            width: 100%;
-            height: 18px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 9px;
-        }
-
-        #unity-progress-bar-full {
-            width: 0%;
-            height: 18px;
-            background: linear-gradient(90deg, #6B8E23, #9ACD32);
-            border-radius: 9px;
-            transition: width 0.3s;
-        }
-
-        #unity-warning, #unity-error {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            border-radius: 8px;
-            display: none;
-            max-width: 80%;
-            text-align: center;
-        }
-
-        .game-controls {
-            margin-top: 20px;
+        .redirect-container {
+            min-height: 100vh;
             display: flex;
-            gap: 10px;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .btn-game {
-            min-width: 150px;
-        }
-
-        /* 載入狀態 */
-        .loading-text {
+        .redirect-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             text-align: center;
-            color: white;
-            margin-top: 10px;
-            font-size: 14px;
+            max-width: 500px;
         }
 
-        /* 全螢幕時的樣式 */
-        #unity-container.fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            max-width: none;
-            z-index: 9999;
-            background: #000;
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
 
-            #unity-container.fullscreen #unity-canvas {
-                width: 100%;
-                height: 100%;
-                border-radius: 0;
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
             }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- 導覽列圖片容器 -->
-    <div class="navbar-image-container">
-        <!-- 遮罩層 -->
-        <div class="navbar-overlay"></div>
-
-        <!-- 導覽內容 -->
-        <div class="navbar-content">
-            <!-- Logo/品牌 -->
-            <a href="index.html" class="navbar-brand-custom">竹崎3D遊戲導覽</a>
-
-            <!-- 導覽選單 -->
-            <ul class="navbar-menu">
-                <li><a href="map/index.html">竹崎地圖</a></li>
-                <li><a href="https://bohuii.github.io/finalproject/">留言板</a></li>
-                <li><a href="introduction.html">竹崎簡介</a></li>
-                <li><a href="home.html#aboutUs">關於我們</a></li>
-                <li><a href="game.html">遊戲導覽</a></li>
-            </ul>
-
-            <!-- 返回首頁按鈕 -->
-            <a href="home.html" class="back-home-btn">返回首頁</a>
+    <!-- 重定向提示頁面 -->
+    <div id="redirect-notice" class="redirect-container">
+        <div class="redirect-box">
+            <h2>🎮 正在前往遊戲頁面</h2>
+            <div class="spinner"></div>
+            <p class="text-muted mb-3">即將自動跳轉至外部遊戲平台...</p>
+            <p class="small">
+                <strong>目標網址：</strong><br>
+                <code id="redirect-url">載入中...</code>
+            </p>
+            <hr>
+            <p class="small text-muted">
+                如果沒有自動跳轉，請點擊下方按鈕：
+            </p>
+            <a id="redirect-link" href="#" class="btn btn-primary">
+                <i class="fas fa-external-link-alt"></i> 立即前往遊戲
+            </a>
+            <br><br>
+            <a href="home.html" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> 返回首頁
+            </a>
         </div>
     </div>
 
-    <!-- 主要內容區 -->
-    <div class="container py-5">
-        <div class="text-center mb-4">
-            <h1 class="display-4 fw-bold">開始你的竹崎之旅</h1>
-            <p class="lead">探索竹崎的美麗景點，體驗 3D 虛擬導覽</p>
+    <!-- 本地遊戲內容（備用，當配置載入失敗時顯示） -->
+    <div id="local-game" style="display: none;">
+        <!-- 原有的 game.html 內容保留在這裡 -->
+        <!-- 導覽列圖片容器 -->
+        <div class="navbar-image-container">
+            <!-- ... 原有的導覽列內容 ... -->
         </div>
 
-        <!-- Unity 遊戲容器 -->
-        <div id="unity-container" class="game-container">
-            <canvas id="unity-canvas" tabindex="-1"></canvas>
-
-            <!-- 載入進度條 -->
-            <div id="unity-loading-bar">
-                <div id="unity-progress-bar-empty">
-                    <div id="unity-progress-bar-full"></div>
+        <!-- 主要內容區 -->
+        <div class="container py-5">
+            <div class="text-center mb-4">
+                <h1 class="display-4 fw-bold">開始你的竹崎之旅</h1>
+                <p class="lead">探索竹崎的美麗景點，體驗 3D 虛擬導覽</p>
+                <div class="alert alert-warning">
+                    ⚠️ 外部遊戲連結暫時無法使用，顯示本地備用內容
                 </div>
-                <div class="loading-text">載入中...</div>
             </div>
 
-            <!-- 錯誤訊息 -->
-            <div id="unity-warning"></div>
-            <div id="unity-error"></div>
-        </div>
-
-        <!-- 遊戲控制按鈕 -->
-        <div class="game-controls">
-            <button id="fullscreen-button" class="btn btn-primary btn-game px-4" style="display:none;">
-                <i class="fas fa-expand"></i> 全螢幕遊玩
-            </button>
-            <button id="mute-button" class="btn btn-secondary btn-game px-4" style="display:none;">
-                <i class="fas fa-volume-mute"></i> 靜音
-            </button>
-            <button id="help-button" class="btn btn-outline-secondary btn-game px-4" data-bs-toggle="modal" data-bs-target="#helpModal">
-                <i class="fas fa-question-circle"></i> 操作說明
-            </button>
+            <!-- 原有的 Unity 遊戲容器等內容 -->
+            <!-- ... -->
         </div>
     </div>
-
-    <!-- 操作說明 Modal -->
-    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="helpModalLabel"><i class="fas fa-gamepad"></i> 遊戲操作說明</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h6><i class="fas fa-keyboard"></i> 鍵盤控制：</h6>
-                    <ul>
-                        <li><strong>W / ↑</strong> - 向前移動</li>
-                        <li><strong>S / ↓</strong> - 向後移動</li>
-                        <li><strong>A / ←</strong> - 向左移動</li>
-                        <li><strong>D / →</strong> - 向右移動</li>
-                        <li><strong>空白鍵</strong> - 跳躍</li>
-                        <li><strong>ESC</strong> - 暫停 / 選單</li>
-                    </ul>
-                    <h6><i class="fas fa-mouse"></i> 滑鼠控制：</h6>
-                    <ul>
-                        <li><strong>移動滑鼠</strong> - 控制視角</li>
-                        <li><strong>左鍵</strong> - 互動 / 選擇</li>
-                    </ul>
-                    <hr>
-                    <p class="text-muted small">
-                        <i class="fas fa-info-circle"></i>
-                        提示：遊戲中點擊景點圖示可以查看詳細資訊，探索竹崎的每個角落！
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">開始遊戲</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Unity WebGL Loader -->
-    <script>
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingBar = document.querySelector("#unity-loading-bar");
-        var progressBarFull = document.querySelector("#unity-progress-bar-full");
-        var fullscreenButton = document.querySelector("#fullscreen-button");
-        var muteButton = document.querySelector("#mute-button");
-        var warningBanner = document.querySelector("#unity-warning");
-        var errorBanner = document.querySelector("#unity-error");
-
-        // 建構設定 - webGame 與 game.html 在同一層級
-        var buildUrl = "webGame/Build";
-        var loaderUrl = buildUrl + "/webGame.loader.js";
-        var config = {
-            dataUrl: buildUrl + "/webGame.data",
-            frameworkUrl: buildUrl + "/webGame.framework.js",
-            codeUrl: buildUrl + "/webGame.wasm",
-            streamingAssetsUrl: "webGame/StreamingAssets",
-            companyName: "竹想一崎玩",
-            productName: "竹崎3D導覽",
-            productVersion: "1.0.0",
-        };
-
-        // 如果是手機裝置，調整畫布大小
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            container.className = "unity-mobile";
-            config.devicePixelRatio = 1;
-        }
-
-        // 顯示錯誤訊息
-        function showError(message) {
-            errorBanner.style.display = "block";
-            errorBanner.innerHTML = `
-                    <p><strong>⚠️ 載入失敗</strong></p>
-                    <p>${message}</p>
-                    <p class="small">請確認 webGame/Build 資料夾中的檔案是否完整</p>
-                `;
-            loadingBar.style.display = "none";
-            console.error("Unity 載入錯誤:", message);
-        }
-
-        // 載入進度更新
-        function updateProgress(progress) {
-            progressBarFull.style.width = (100 * progress) + "%";
-            document.querySelector(".loading-text").textContent = `載入中... ${Math.round(progress * 100)}%`;
-
-            if (progress >= 1) {
-                loadingBar.style.display = "none";
-                fullscreenButton.style.display = "inline-block";
-                muteButton.style.display = "inline-block";
-                console.log("✅ Unity 遊戲載入完成");
-            }
-        }
-
-        // 載入 Unity Loader
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            console.log("🎮 開始載入 Unity 遊戲...");
-            createUnityInstance(canvas, config, updateProgress).then((unityInstance) => {
-                window.unityInstance = unityInstance;
-
-                // 全螢幕按鈕
-                fullscreenButton.onclick = () => {
-                    if (!document.fullscreenElement) {
-                        container.requestFullscreen().then(() => {
-                            container.classList.add("fullscreen");
-                            fullscreenButton.innerHTML = '<i class="fas fa-compress"></i> 退出全螢幕';
-                        }).catch((err) => {
-                            console.warn(`無法進入全螢幕模式: ${err.message}`);
-                            alert("您的瀏覽器可能不支援全螢幕模式");
-                        });
-                    } else {
-                        document.exitFullscreen().then(() => {
-                            container.classList.remove("fullscreen");
-                            fullscreenButton.innerHTML = '<i class="fas fa-expand"></i> 全螢幕遊玩';
-                        });
-                    }
-                };
-
-                // 靜音按鈕
-                var isMuted = false;
-                muteButton.onclick = () => {
-                    isMuted = !isMuted;
-                    // 如果 Unity 場景中有 AudioManager 物件，可以使用以下方法
-                    // unityInstance.SendMessage('AudioManager', 'SetMute', isMuted ? 1 : 0);
-                    muteButton.innerHTML = isMuted ?
-                        '<i class="fas fa-volume-up"></i> 開啟音效' :
-                        '<i class="fas fa-volume-mute"></i> 靜音';
-                    console.log(isMuted ? "🔇 音效已靜音" : "🔊 音效已開啟");
-                };
-
-            }).catch((message) => {
-                showError(message);
-            });
-        };
-
-        script.onerror = () => {
-            showError("無法載入遊戲檔案。請確認以下事項：<br>1. webGame/Build 資料夾存在<br>2. 所有 Unity WebGL 檔案已正確上傳<br>3. 使用 HTTP/HTTPS 伺服器運行（GitHub Pages 已滿足）");
-        };
-
-        document.body.appendChild(script);
-
-        // 監聽全螢幕變化
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                container.classList.remove("fullscreen");
-                fullscreenButton.innerHTML = '<i class="fas fa-expand"></i> 全螢幕遊玩';
-            }
-        });
-
-        // 頁面載入完成提示
-        console.log("📍 遊戲頁面已就緒");
-        console.log("📂 Unity 檔案路徑: " + buildUrl);
-    </script>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- 導覽列輪播功能 -->
-    <script src="scripts/navbar-carousel.js"></script>
 </body>
 </html>

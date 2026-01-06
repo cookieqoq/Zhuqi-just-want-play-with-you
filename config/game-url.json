@@ -1,0 +1,6 @@
+{
+  "gameUrl": " https://freeware-above-trying-governing.trycloudflare.com",
+  "enabled": true,
+  "fallbackUrl": "game.html",
+  "redirectDelay": 3000
+}
