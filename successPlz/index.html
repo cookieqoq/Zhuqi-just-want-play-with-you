@@ -20,16 +20,26 @@
     <script src="../scripts/game-redirect.js"></script>
 
     <style>
-        /* 確保頁面不會被導覽列遮擋 - 不覆蓋 game.css 的 padding-top */
+        /* 確保頁面不會被導覽列遮擋 */
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            /* 保留 game.css 的 padding-top: 120px (電腦版) 或 100px (手機版) */
+            padding-top: 0 !important; /* 移除 body 的 padding-top，讓 navbar 固定在頂部 */
+        }
+
+        /* 導覽列固定定位 */
+        .navbar-image-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
         }
 
         /* 主要內容容器 - 確保不被導覽列遮擋 */
         .container {
-            padding-top: 30px; /* 增加上方間距，確保不被遮擋 */
+            margin-top: 140px; /* 調整為導覽列高度 + 額外間距 */
+            padding-top: 30px;
             padding-bottom: 40px;
             max-width: 1200px;
         }
@@ -192,8 +202,9 @@
         /* 響應式設計 */
         @media (max-width: 768px) {
             .container {
-                padding-top: 30px;
-                padding-bottom: 40px;
+                margin-top: 120px; /* 手機版導覽列較小 */
+                padding-top: 20px;
+                padding-bottom: 30px;
                 padding-left: 15px;
                 padding-right: 15px;
             }
