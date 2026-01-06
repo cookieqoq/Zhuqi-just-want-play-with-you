@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; margin: 0; }
+        h1 { color: #1c1e21; margin-bottom: 30px; }
+        .container { width: 100%; max-width: 600px; }
+        .top-bar { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+        .btn { background-color: #007bff; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn:hover { background-color: #0056b3; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .card { border-radius: 12px; padding: 20px; margin-bottom: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: relative; }
+        textarea { width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 8px; padding: 12px; outline: none; resize: none; font-size: 16px; margin-top: 10px; box-sizing: border-box; }
+        
+        /* 圖片樣式與防破圖 */
+        .post-img { max-width: 100%; border-radius: 8px; margin: 15px 0; display: block; background-color: white; }
+        .post-img[src="null"], .post-img[src=""], .post-img:not([src]) { display: none !important; }
+        
+        #preViewContainer { position: relative; margin-top: 15px; display: none; }
+        #preView { max-width: 100%; border-radius: 8px; display: block; border: 1px solid #eee; background-color: white; }
+        #cancelImg { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; }
+
+        .footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #65676b; margin-top: 12px; }
+        .action-links { display: flex; gap: 15px; }
+        .del-text { cursor: pointer; color: #d93025; font-weight: bold; }
+        .edit-text { cursor: pointer; color: #1877f2; font-weight: bold; }
+        .my-tag { background: #e7f3ff; color: #1877f2; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 8px; }
+    </style>
+</head>
+<body>
+
+    <h1>留言板</h1>
+
+    <div class="container">
+        <section id="viewSection">
+            <div class="top-bar"><button class="btn" onclick="openAddPage()">新增留言</button></div>
+            <div id="msgList">讀取雲端資料中...</div>
+        </section>
+
+        <section id="addSection" style="display: none;">
+            <div class="top-bar"><button class="btn" style="background:#6c757d" onclick="goPage('view')">上一頁</button></div>
+            <div class="card">
+                <h3 id="formTitle">新增留言</h3>
+                <input type="file" id="imgInput" accept="image/*" style="display:none">
+                <button class="btn" style="background:#28a745" onclick="document.getElementById('imgInput').click()">選擇照片</button>
+                
+                <div id="preViewContainer">
+                    <img id="preView">
+                    <button id="cancelImg" title="清除照片">✕</button>
+                </div>
+                
+                <textarea id="msgContent" placeholder="寫下你的心情..."></textarea>
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="btn" id="submitBtn" onclick="doUpload()">確認發布</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- 你的 Firebase 設定 ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMuONqbs2YVqZ8Q_ai7efQun59JPyt9eE",
+            authDomain: "finalproject-bd5a0.firebaseapp.com",
+            projectId: "finalproject-bd5a0",
+            storageBucket: "finalproject-bd5a0.firebasestorage.app",
+            messagingSenderId: "23305010356",
+            appId: "1:23305010356:web:850ae97e45fc6e80452be1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const ADMIN_KEY = "admin888"; 
+        let currentEditID = null;
+
+        if (!localStorage.getItem('myUserID')) {
+            localStorage.setItem('myUserID', 'u_' + Math.random().toString(36).substr(2, 9));
+        }
+        const currentUserID = localStorage.getItem('myUserID');
+
+        const imgInput = document.getElementById('imgInput');
+        const preView = document.getElementById('preView');
+        const preViewContainer = document.getElementById('preViewContainer');
+        const cancelBtn = document.getElementById('cancelImg');
+
+        window.goPage = (p) => {
+            document.getElementById('viewSection').style.display = (p === 'add' ? 'none' : 'block');
+            document.getElementById('addSection').style.display = (p === 'add' ? 'block' : 'none');
+            if(p === 'view') resetForm();
+        };
+
+        window.openAddPage = () => {
+            currentEditID = null;
+            document.getElementById('formTitle').innerText = "新增留言";
+            document.getElementById('submitBtn').innerText = "確認發布";
+            resetForm();
+            goPage('add');
+        };
+
+        imgInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    preView.src = event.target.result;
+                    preViewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            imgInput.value = "";
+            preView.src = "";
+            preViewContainer.style.display = 'none';
+        });
+
+        function resetForm() {
+            document.getElementById('msgContent').value = '';
+            imgInput.value = '';
+            preView.src = '';
+            preViewContainer.style.display = 'none';
+        }
+
+        window.doUpload = async () => {
+            const txt = document.getElementById('msgContent').value;
+            const file = imgInput.files[0];
+            const btn = document.getElementById('submitBtn');
+
+            if (!txt && !file && !preView.src) return alert("請輸入內容或選取照片");
+            
+            btn.disabled = true; 
+            btn.innerText = "連線中...";
+
+            try {
+                let imgFinal = null;
+                // 檢查是否有現有的編輯圖
+                if (preView.style.display !== 'none' && preView.src.startsWith('data:image')) {
+                    imgFinal = preView.src;
+                }
+
+                if (file) {
+                    imgFinal = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                let w = img.width, h = img.height;
+                                if (w > 800) { h *= 800 / w; w = 800; }
+                                canvas.width = w; canvas.height = h;
+                                const ctx = canvas.getContext('2d');
+                                
+                                // 修正背景變黑：塗滿白色
+                                ctx.fillStyle = "#FFFFFF";
+                                ctx.fillRect(0, 0, w, h);
+                                ctx.drawImage(img, 0, 0, w, h);
+                                
+                                resolve(canvas.toDataURL('image/jpeg', 0.6));
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                if (currentEditID) {
+                    await updateDoc(doc(db, "posts", currentEditID), {
+                        txt: txt,
+                        imgData: imgFinal, 
+                        lastEdit: new Date().toLocaleString()
+                    });
+                } else {
+                    await addDoc(collection(db, "posts"), {
+                        txt: txt,
+                        imgData: imgFinal,
+                        authorID: currentUserID,
+                        time: new Date().toLocaleString(),
+                        createdAt: Date.now()
+                    });
+                }
+                goPage('view');
+            } catch (e) {
+                console.error(e);
+                alert("操作失敗，請確認 Firestore 規則已發佈為 true");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "確認發布";
+            }
+        };
+
+        onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc")), (snap) => {
+            const list = document.getElementById('msgList');
+            list.innerHTML = snap.empty ? '<p style="text-align:center;color:#999;">目前尚無留言</p>' : '';
+            
+            snap.forEach((d) => {
+                const item = d.data();
+                const isMe = (item.authorID === currentUserID);
+                
+                // 嚴格檢查 Base64 格式，防止破圖
+                const hasImg = item.imgData && item.imgData.startsWith('data:image');
+                const imgHtml = hasImg ? `<img src="${item.imgData}" class="post-img">` : '';
+
+                const actionsHtml = isMe ? `
+                    <div class="action-links">
+                        <span class="edit-text" onclick="prepareEdit('${d.id}', \`${item.txt}\`, '${item.imgData || ''}')">編輯</span>
+                        <span class="del-text" onclick="deletePost('${d.id}', '${item.authorID}')">刪除</span>
+                    </div>
+                ` : '';
+
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <p style="white-space:pre-wrap;font-size:17px;">${item.txt}</p>
+                    ${imgHtml}
+                    <div class="footer-info">
+                        <span>${item.time}${isMe ? '<span class="my-tag">本人</span>' : ''} ${item.lastEdit ? '(已編輯)' : ''}</span>
+                        ${actionsHtml}
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        });
+
+        window.prepareEdit = (id, txt, img) => {
+            currentEditID = id;
+            document.getElementById('formTitle').innerText = "編輯留言";
+            document.getElementById('submitBtn').innerText = "儲存修改";
+            document.getElementById('msgContent').value = txt;
+            if (img && img.startsWith('data:image')) {
+                preView.src = img;
+                preViewContainer.style.display = 'block';
+            } else {
+                preView.src = "";
+                preViewContainer.style.display = 'none';
+            }
+            goPage('add');
+        };
+
+        window.deletePost = async (id, authorID) => {
+            const pwd = (authorID === currentUserID) ? (confirm("確定刪除？") ? ADMIN_KEY : null) : prompt("請輸入管理員密碼：");
+            if (pwd === ADMIN_KEY) await deleteDoc(doc(db, "posts", id));
+            else if (pwd !== null) alert("密碼錯誤");
+        };
+    </script>
+</body>
+</html>
