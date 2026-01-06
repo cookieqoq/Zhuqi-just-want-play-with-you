@@ -20,10 +20,17 @@
     <script src="../scripts/game-redirect.js"></script>
 
     <style>
-        /* 確保頁面不會被導覽列遮擋 */
+        /* 確保頁面不會被導覽列遮擋 - 不覆蓋 game.css 的 padding-top */
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            /* 保留 game.css 的 padding-top: 120px (電腦版) 或 100px (手機版) */
+        }
+
+        /* 主要內容容器 - 確保不被導覽列遮擋 */
+        .container {
+            padding-top: 20px; /* 額外的上方間距 */
+            padding-bottom: 40px; /* 底部間距 */
         }
 
         /* Unity 容器樣式調整 */
@@ -117,6 +124,11 @@
 
         /* 響應式設計 */
         @media (max-width: 768px) {
+            .container {
+                padding-top: 20px; /* 手機版保持上方間距 */
+                padding-bottom: 40px;
+            }
+
             #unity-container {
                 margin: 10px;
                 padding: 15px;
@@ -321,7 +333,55 @@
         console.log('📂 Unity 檔案路徑: ' + buildUrl);
     </script>
 
-    <!-- 導覽列背景輪播腳本 -->
-    <script src="../scripts/navbar-carousel.js"></script>
+    <!-- ==================== 自訂導覽列背景圖片 ==================== -->
+    <script>
+        // 在載入 navbar-carousel.js 之前覆蓋圖片設定
+        (function () {
+            // 自訂地圖頁面專用的背景圖片
+            const customNavbarImages = [
+                '../index_img/index_bg3.jpg',
+                '../index_img/index_bg2.jpg',    // 或使用 index_img 中的圖片
+                '../index_img/index_bg1.jpg'
+            ];
+
+            let currentIndex = 0;
+            let navbarContainer = null;
+            let intervalId = null;
+
+            function initCustomCarousel() {
+                navbarContainer = document.querySelector('.navbar-image-container');
+
+                if (!navbarContainer) {
+                    console.warn('⚠️ 找不到導覽列容器');
+                    return;
+                }
+
+                // 設定初始背景
+                if (customNavbarImages.length > 0) {
+                    navbarContainer.style.backgroundImage = `url('${customNavbarImages[0]}')`;
+                    navbarContainer.style.backgroundSize = 'cover';
+                    navbarContainer.style.backgroundPosition = 'center';
+                    navbarContainer.style.transition = 'background-image 0.5s ease-in-out';
+                }
+
+                // 啟動輪播（每 10 秒切換）
+                if (customNavbarImages.length > 1) {
+                    intervalId = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % customNavbarImages.length;
+                        navbarContainer.style.backgroundImage = `url('${customNavbarImages[currentIndex]}')`;
+                    }, 10000);
+                }
+
+                console.log(`✅ 地圖頁面導覽列輪播已啟動，共 ${customNavbarImages.length} 張圖片`);
+            }
+
+            // 頁面載入時初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCustomCarousel);
+            } else {
+                initCustomCarousel();
+            }
+        })();
+    </script>
 </body>
 </html>
