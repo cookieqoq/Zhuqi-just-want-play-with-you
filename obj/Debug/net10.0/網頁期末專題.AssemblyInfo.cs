@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("網頁期末專題")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29479326717685da30939a6f3f6f9be35687d59d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b2ce796d4204711dd18a3fa921d077c9ea10322c")]
 [assembly: System.Reflection.AssemblyProductAttribute("網頁期末專題")]
 [assembly: System.Reflection.AssemblyTitleAttribute("網頁期末專題")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
