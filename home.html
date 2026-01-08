@@ -48,6 +48,67 @@
             z-index: 1;
         }
 
+        /* 標題列表容器 */
+        .homepage-titles-container {
+            position: fixed;
+            top: 50%;
+            right: 50px;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 300px;
+        }
+
+        .homepage-title-item {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+            .homepage-title-item:hover {
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateX(-5px);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .homepage-title-item.active {
+                background: rgba(175, 238, 238, 0.95);
+                border-left-color: #6B8E23;
+                transform: translateX(-10px);
+                box-shadow: 0 4px 20px rgba(107, 142, 35, 0.3);
+            }
+
+        .title-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .homepage-title-item.active .title-number {
+            background: linear-gradient(135deg, #6B8E23 0%, #8FBC8F 100%);
+        }
+
+        .title-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
         /* 輪播指示器 */
         .homepage-indicators {
             position: fixed;
@@ -113,6 +174,19 @@
                 height: calc(100vh - 100px);
             }
 
+            .homepage-titles-container {
+                right: 20px;
+                max-width: 200px;
+            }
+
+            .homepage-title-item {
+                padding: 10px 15px;
+            }
+
+            .title-text {
+                font-size: 14px;
+            }
+
             .content-section {
                 padding: 20px;
             }
@@ -122,7 +196,13 @@
             }
         }
 
-       /*氣候方塊設計*/
+        @media (max-width: 576px) {
+            .homepage-titles-container {
+                display: none; /* 在小螢幕上隱藏標題列表 */
+            }
+        }
+
+        /*氣候方塊設計*/
         <style >
         * {
             margin: 0;
@@ -379,6 +459,9 @@
         <div class="homepage-overlay"></div>
     </div>
 
+    <!-- 標題列表容器 -->
+    <div class="homepage-titles-container" id="homepage-titles-container"></div>
+
     <!-- 輪播指示器 -->
     <div class="homepage-indicators" id="homepage-indicators-container"></div>
 
@@ -391,31 +474,30 @@
         // 導覽列現在使用單一底色背景（棕色漸層）
 
         // ==================== 主頁面背景輪播 ====================
-        // 定義 images/hp_img 資料夾中的圖片列表
-        // 當您新增或修改圖片時，只需更新這個陣列即可
+        // 定義 images/hp_img 資料夾中的圖片列表及對應標題
         const homepageImages = [
-            'images/hp_img/hp1.jpg',
-            'images/hp_img/hp2.jpg',
-            'images/hp_img/hp3.jpg',
-            'images/hp_img/hp5.jpg',
-            'images/hp_img/hp6.jpg',
-            'images/hp_img/hp7.jpg',
-            'images/hp_img/hp8.jpg'
-            // 如需新增更多圖片，直接在此處添加路徑
-            // 'images/hp_img/hp9.jpg',
-            // 'images/hp_img/hp10.jpg',
+            { path: 'images/hp_img/hp1.jpg', title: '竹崎火車站' },
+            { path: 'images/hp_img/hp2.jpg', title: '奮起湖火車站' },
+            { path: 'images/hp_img/hp3.jpg', title: '奮起湖老街' },
+            { path: 'images/hp_img/hp5.jpg', title: '竹崎火車站-兒童戲水區' },
+            { path: 'images/hp_img/noodle.jpg', title: '竹崎外省麵' },
+            { path: 'images/hp_img/hp7.jpg', title: '觀音瀑布' },
+            { path: 'images/hp_img/hp8.jpg', title: '奮起湖老街' }
+            // 如需新增更多圖片，直接在此處添加物件
+            // { path: 'images/hp_img/hp9.jpg', title: '新景點名稱' },
         ];
 
-        // 動態產生背景輪播元素
+        // 動態產生背景輪播元素和標題列表
         const homepageSlidesContainer = document.getElementById('homepage-slides-container');
         const homepageIndicatorsContainer = document.getElementById('homepage-indicators-container');
+        const homepageTitlesContainer = document.getElementById('homepage-titles-container');
 
-        // 回圈建立所有背景圖片元素
-        homepageImages.forEach((imagePath, index) => {
+        // 回圈建立所有背景圖片元素、指示器和標題
+        homepageImages.forEach((item, index) => {
             // 創建背景圖片元素
             const slide = document.createElement('div');
             slide.className = `homepage-slide${index === 0 ? ' active' : ''}`;
-            slide.style.backgroundImage = `url('${imagePath}')`;
+            slide.style.backgroundImage = `url('${item.path}')`;
             slide.setAttribute('data-index', index);
             homepageSlidesContainer.appendChild(slide);
 
@@ -425,24 +507,38 @@
             indicator.setAttribute('data-index', index);
             indicator.onclick = () => goToHomepageSlide(index);
             homepageIndicatorsContainer.appendChild(indicator);
+
+            // 創建標題項目
+            const titleItem = document.createElement('div');
+            titleItem.className = `homepage-title-item${index === 0 ? ' active' : ''}`;
+            titleItem.setAttribute('data-index', index);
+            titleItem.innerHTML = `
+                        <span class="title-number">${index + 1}</span>
+                        <span class="title-text">${item.title}</span>
+                    `;
+            titleItem.onclick = () => goToHomepageSlide(index);
+            homepageTitlesContainer.appendChild(titleItem);
         });
 
         // 背景輪播功能變數
         let currentHomepageSlide = 0;
         const homepageSlides = document.querySelectorAll('.homepage-slide');
         const homepageIndicators = document.querySelectorAll('.homepage-indicator');
+        const homepageTitleItems = document.querySelectorAll('.homepage-title-item');
         const totalHomepageSlides = homepageSlides.length;
 
-        // 顯示指定的背景圖片
+        // 顯示指定的背景圖片和標題
         function showHomepageSlide(index) {
             // 移除所有 active 類別
             homepageSlides.forEach(slide => slide.classList.remove('active'));
             homepageIndicators.forEach(indicator => indicator.classList.remove('active'));
+            homepageTitleItems.forEach(item => item.classList.remove('active'));
 
             // 添加 active 類別到當前項目
             if (homepageSlides[index]) {
                 homepageSlides[index].classList.add('active');
                 homepageIndicators[index].classList.add('active');
+                homepageTitleItems[index].classList.add('active');
             }
         }
 
@@ -467,11 +563,11 @@
         homepageSlides.forEach((slide, index) => {
             const img = new Image();
             img.onerror = () => {
-                console.warn(`背景圖片載入失敗: ${homepageImages[index]}`);
+                console.warn(`背景圖片載入失敗: ${homepageImages[index].path}`);
                 // 如果圖片載入失敗，使用漸層背景
                 slide.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             };
-            img.src = homepageImages[index];
+            img.src = homepageImages[index].path;
         });
 
         // ==================== 平滑滾動功能 ====================
