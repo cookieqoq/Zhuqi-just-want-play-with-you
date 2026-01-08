@@ -48,65 +48,54 @@
             z-index: 1;
         }
 
-        /* 標題列表容器 */
-        .homepage-titles-container {
+        /* 當前標題顯示容器 - 改為單一大標題 */
+        .homepage-current-title {
             position: fixed;
             top: 50%;
-            right: 50px;
+            right: 80px;
             transform: translateY(-50%);
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 300px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(15px);
+            max-width: 400px;
+            transition: all 0.5s ease;
         }
 
-        .homepage-title-item {
-            background: rgba(255, 255, 255, 0.85);
-            padding: 15px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-            .homepage-title-item:hover {
-                background: rgba(255, 255, 255, 0.95);
-                transform: translateX(-5px);
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            .homepage-current-title:hover {
+                transform: translateY(-50%) scale(1.05);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
             }
 
-            .homepage-title-item.active {
-                background: rgba(175, 238, 238, 0.95);
-                border-left-color: #6B8E23;
-                transform: translateX(-10px);
-                box-shadow: 0 4px 20px rgba(107, 142, 35, 0.3);
-            }
-
-        .title-number {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
+        .current-title-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #ffffff;
             text-align: center;
-            line-height: 25px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-right: 10px;
+            line-height: 1.3;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            margin: 0;
         }
 
-        .homepage-title-item.active .title-number {
-            background: linear-gradient(135deg, #6B8E23 0%, #8FBC8F 100%);
-        }
-
-        .title-text {
-            font-size: 16px;
+        .current-title-number {
+            display: block;
+            font-size: 20px;
             font-weight: 600;
-            color: #333;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .current-title-decoration {
+            width: 60px;
+            height: 4px;
+            background: #ffffff;
+            margin: 20px auto 0;
+            border-radius: 2px;
         }
 
         /* 輪播指示器 */
@@ -174,17 +163,18 @@
                 height: calc(100vh - 100px);
             }
 
-            .homepage-titles-container {
-                right: 20px;
-                max-width: 200px;
+            .homepage-current-title {
+                right: 30px;
+                padding: 25px 35px;
+                max-width: 280px;
             }
 
-            .homepage-title-item {
-                padding: 10px 15px;
+            .current-title-text {
+                font-size: 32px;
             }
 
-            .title-text {
-                font-size: 14px;
+            .current-title-number {
+                font-size: 16px;
             }
 
             .content-section {
@@ -197,13 +187,23 @@
         }
 
         @media (max-width: 576px) {
-            .homepage-titles-container {
-                display: none; /* 在小螢幕上隱藏標題列表 */
+            .homepage-current-title {
+                right: 50%;
+                transform: translate(50%, -50%);
+                padding: 20px 30px;
+                max-width: 250px;
+            }
+
+                .homepage-current-title:hover {
+                    transform: translate(50%, -50%) scale(1.02);
+                }
+
+            .current-title-text {
+                font-size: 28px;
             }
         }
 
-        /*氣候方塊設計*/
-        <style >
+        /* 氣候方塊設計 */
         * {
             margin: 0;
             padding: 0;
@@ -459,8 +459,12 @@
         <div class="homepage-overlay"></div>
     </div>
 
-    <!-- 標題列表容器 -->
-    <div class="homepage-titles-container" id="homepage-titles-container"></div>
+    <!-- 當前標題顯示 - 單一大標題 -->
+    <div class="homepage-current-title" id="homepage-current-title">
+        <span class="current-title-number" id="current-title-number">01 / 07</span>
+        <h2 class="current-title-text" id="current-title-text">竹崎火車站</h2>
+        <div class="current-title-decoration"></div>
+    </div>
 
     <!-- 輪播指示器 -->
     <div class="homepage-indicators" id="homepage-indicators-container"></div>
@@ -487,12 +491,13 @@
             // { path: 'images/hp_img/hp9.jpg', title: '新景點名稱' },
         ];
 
-        // 動態產生背景輪播元素和標題列表
+        // 動態產生背景輪播元素
         const homepageSlidesContainer = document.getElementById('homepage-slides-container');
         const homepageIndicatorsContainer = document.getElementById('homepage-indicators-container');
-        const homepageTitlesContainer = document.getElementById('homepage-titles-container');
+        const currentTitleText = document.getElementById('current-title-text');
+        const currentTitleNumber = document.getElementById('current-title-number');
 
-        // 回圈建立所有背景圖片元素、指示器和標題
+        // 回圈建立所有背景圖片元素和指示器
         homepageImages.forEach((item, index) => {
             // 創建背景圖片元素
             const slide = document.createElement('div');
@@ -507,38 +512,32 @@
             indicator.setAttribute('data-index', index);
             indicator.onclick = () => goToHomepageSlide(index);
             homepageIndicatorsContainer.appendChild(indicator);
-
-            // 創建標題項目
-            const titleItem = document.createElement('div');
-            titleItem.className = `homepage-title-item${index === 0 ? ' active' : ''}`;
-            titleItem.setAttribute('data-index', index);
-            titleItem.innerHTML = `
-                        <span class="title-number">${index + 1}</span>
-                        <span class="title-text">${item.title}</span>
-                    `;
-            titleItem.onclick = () => goToHomepageSlide(index);
-            homepageTitlesContainer.appendChild(titleItem);
         });
 
         // 背景輪播功能變數
         let currentHomepageSlide = 0;
         const homepageSlides = document.querySelectorAll('.homepage-slide');
         const homepageIndicators = document.querySelectorAll('.homepage-indicator');
-        const homepageTitleItems = document.querySelectorAll('.homepage-title-item');
         const totalHomepageSlides = homepageSlides.length;
+
+        // 更新當前標題顯示
+        function updateCurrentTitle(index) {
+            const currentItem = homepageImages[index];
+            currentTitleText.textContent = currentItem.title;
+            currentTitleNumber.textContent = `${String(index + 1).padStart(2, '0')} / ${String(totalHomepageSlides).padStart(2, '0')}`;
+        }
 
         // 顯示指定的背景圖片和標題
         function showHomepageSlide(index) {
             // 移除所有 active 類別
             homepageSlides.forEach(slide => slide.classList.remove('active'));
             homepageIndicators.forEach(indicator => indicator.classList.remove('active'));
-            homepageTitleItems.forEach(item => item.classList.remove('active'));
 
             // 添加 active 類別到當前項目
             if (homepageSlides[index]) {
                 homepageSlides[index].classList.add('active');
                 homepageIndicators[index].classList.add('active');
-                homepageTitleItems[index].classList.add('active');
+                updateCurrentTitle(index);
             }
         }
 
@@ -553,6 +552,9 @@
             currentHomepageSlide = index;
             showHomepageSlide(currentHomepageSlide);
         }
+
+        // 初始化第一個標題
+        updateCurrentTitle(0);
 
         // 自動輪播 - 每6秒切換一次
         if (totalHomepageSlides > 0) {
