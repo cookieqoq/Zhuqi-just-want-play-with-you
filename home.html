@@ -31,10 +31,16 @@
             background-repeat: no-repeat;
             opacity: 0;
             transition: opacity 2s ease-in-out;
+            cursor: pointer;
         }
 
             .homepage-slide.active {
                 opacity: 1;
+                z-index: 1;
+            }
+
+            .homepage-slide:hover {
+                filter: brightness(1.1);
             }
 
         /* 背景遮罩層 */
@@ -46,9 +52,10 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.2);
             z-index: 1;
+            pointer-events: none;
         }
 
-        /* 當前標題顯示容器 - 改為單一大標題 */
+        /* 當前標題顯示容器 - 移除序號 */
         .homepage-current-title {
             position: fixed;
             top: 50%;
@@ -62,6 +69,7 @@
             backdrop-filter: blur(15px);
             max-width: 400px;
             transition: all 0.5s ease;
+            pointer-events: none;
         }
 
             .homepage-current-title:hover {
@@ -78,16 +86,6 @@
             letter-spacing: 2px;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
             margin: 0;
-        }
-
-        .current-title-number {
-            display: block;
-            font-size: 20px;
-            font-weight: 600;
-            color: #ffffff;
-            text-align: center;
-            margin-bottom: 15px;
-            opacity: 0.9;
         }
 
         .current-title-decoration {
@@ -171,10 +169,6 @@
 
             .current-title-text {
                 font-size: 32px;
-            }
-
-            .current-title-number {
-                font-size: 16px;
             }
 
             .content-section {
@@ -459,9 +453,8 @@
         <div class="homepage-overlay"></div>
     </div>
 
-    <!-- 當前標題顯示 - 單一大標題 -->
+    <!-- 當前標題顯示 - 移除序號 -->
     <div class="homepage-current-title" id="homepage-current-title">
-        <span class="current-title-number" id="current-title-number">01 / 07</span>
         <h2 class="current-title-text" id="current-title-text">竹崎火車站</h2>
         <div class="current-title-decoration"></div>
     </div>
@@ -478,24 +471,23 @@
         // 導覽列現在使用單一底色背景（棕色漸層）
 
         // ==================== 主頁面背景輪播 ====================
-        // 定義 images/hp_img 資料夾中的圖片列表及對應標題
+        // 定義 images/hp_img 資料夾中的圖片列表、對應標題及連結
         const homepageImages = [
-            { path: 'images/hp_img/hp1.jpg', title: '竹崎火車站' },
-            { path: 'images/hp_img/hp2.jpg', title: '奮起湖火車站' },
-            { path: 'images/hp_img/hp3.jpg', title: '奮起湖老街' },
-            { path: 'images/hp_img/hp5.jpg', title: '竹崎火車站-兒童戲水區' },
-            { path: 'images/hp_img/noodle.jpg', title: '竹崎外省麵' },
-            { path: 'images/hp_img/hp7.jpg', title: '觀音瀑布' },
-            { path: 'images/hp_img/hp8.jpg', title: '奮起湖老街' }
+            { path: 'images/hp_img/hp1.jpg', title: '竹崎火車站', link: 'map/statioin.html' },
+            { path: 'images/hp_img/hp2.jpg', title: '奮起湖火車站', link: 'map/hustation.html' },
+            { path: 'images/hp_img/hp3.jpg', title: '奮起湖老街', link: 'map/hu.html' },
+            { path: 'images/hp_img/hp5.jpg', title: '竹崎火車站-兒童戲水區', link: 'map/station.html' },
+            { path: 'images/hp_img/noodle.jpg', title: '竹崎外省麵', link: 'map/noodle.html' },
+            { path: 'images/hp_img/hp7.jpg', title: '觀音瀑布', link: 'map/fall.html' },
+            { path: 'images/hp_img/hp8.jpg', title: '奮起湖老街', link: 'map.hu.html' }
             // 如需新增更多圖片，直接在此處添加物件
-            // { path: 'images/hp_img/hp9.jpg', title: '新景點名稱' },
+            // { path: 'images/hp_img/hp9.jpg', title: '新景點名稱', link: 'your-link.html' },
         ];
 
         // 動態產生背景輪播元素
         const homepageSlidesContainer = document.getElementById('homepage-slides-container');
         const homepageIndicatorsContainer = document.getElementById('homepage-indicators-container');
         const currentTitleText = document.getElementById('current-title-text');
-        const currentTitleNumber = document.getElementById('current-title-number');
 
         // 回圈建立所有背景圖片元素和指示器
         homepageImages.forEach((item, index) => {
@@ -504,6 +496,13 @@
             slide.className = `homepage-slide${index === 0 ? ' active' : ''}`;
             slide.style.backgroundImage = `url('${item.path}')`;
             slide.setAttribute('data-index', index);
+            slide.setAttribute('data-link', item.link);
+
+            // 添加點擊事件 - 跳轉到對應連結
+            slide.onclick = () => {
+                window.location.href = item.link;
+            };
+
             homepageSlidesContainer.appendChild(slide);
 
             // 創建指示器
@@ -520,11 +519,10 @@
         const homepageIndicators = document.querySelectorAll('.homepage-indicator');
         const totalHomepageSlides = homepageSlides.length;
 
-        // 更新當前標題顯示
+        // 更新當前標題顯示（移除序號）
         function updateCurrentTitle(index) {
             const currentItem = homepageImages[index];
             currentTitleText.textContent = currentItem.title;
-            currentTitleNumber.textContent = `${String(index + 1).padStart(2, '0')} / ${String(totalHomepageSlides).padStart(2, '0')}`;
         }
 
         // 顯示指定的背景圖片和標題
@@ -592,6 +590,7 @@
         console.log(`✅ 首頁已載入完成`);
         console.log(`🖼️ 主頁面背景圖片數量: ${homepageImages.length}`);
         console.log(`💡 如需修改背景圖片，請編輯 homepageImages 陣列`);
+        console.log(`🔗 點擊背景圖片可跳轉到對應頁面`);
     </script>
 </body>
 </html>
