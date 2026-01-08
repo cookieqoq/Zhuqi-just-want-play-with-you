@@ -20,45 +20,79 @@
     <script src="../scripts/game-redirect.js"></script>
 
     <style>
-        /* 確保頁面不會被導覽列遮擋 */
+        /* 重置 body 樣式 - 移除 padding 和 margin */
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0 !important;
             min-height: 100vh;
-            padding-top: 0 !important; /* 移除 body 的 padding-top，讓 navbar 固定在頂部 */
+            overflow: hidden; /* 防止 body 捲動 */
+            display: flex;
+            flex-direction: column;
         }
 
-        /* 導覽列固定定位 */
+        /* 導覽列固定在頂部 - 不捲動 */
         .navbar-image-container {
-            position: fixed;
+            position: relative; /* 改為相對定位 */
+            width: 100%;
+            height: 120px; /* 固定高度 */
+            flex-shrink: 0; /* 防止被壓縮 */
+            z-index: 1000;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* 遮罩層 */
+        .navbar-overlay {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 1000;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
         }
 
-        /* 主要內容容器 - 確保不被導覽列遮擋 */
+        /* 導覽內容 */
+        .navbar-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        /* 主要內容區域 - 可獨立捲動 */
+        .main-content-wrapper {
+            flex: 1;
+            overflow-y: auto; /* 啟用垂直捲動 */
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* 內容容器 */
         .container {
-            margin-top: 140px; /* 調整為導覽列高度 + 額外間距 */
-            padding-top: 30px;
-            padding-bottom: 40px;
+            margin: 0 auto;
+            padding: 40px 20px;
             max-width: 1200px;
         }
 
-        /* Unity 容器樣式調整 - 確保背景完全包裹 */
+        /* Unity 容器樣式調整 */
         #unity-container {
-            margin: 0 auto 20px auto;
+            margin: 0 auto 30px auto;
             max-width: 960px;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            /* 確保背景完全包裹所有內容 */
             display: block;
-            overflow: visible; /* 改為 visible 確保內容不被裁切 */
+            overflow: visible;
             position: relative;
         }
 
-        /* Canvas 容器包裹 - 確保 canvas 在背景內 */
+        /* Canvas 容器包裹 */
         .canvas-wrapper {
             position: relative;
             width: 100%;
@@ -168,7 +202,7 @@
             background: white;
             border-radius: 12px;
             padding: 25px;
-            margin: 20px auto;
+            margin: 20px auto 40px auto;
             max-width: 960px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
@@ -199,30 +233,60 @@
                 min-width: 120px;
             }
 
+        /* 自訂捲軸樣式（可選） */
+        .main-content-wrapper::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .main-content-wrapper::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+        }
+
+            .main-content-wrapper::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.5);
+            }
+
         /* 響應式設計 */
         @media (max-width: 768px) {
+            .navbar-image-container {
+                height: 100px; /* 手機版導覽列較小 */
+            }
+
+            .navbar-content {
+                padding: 0 15px;
+                flex-wrap: wrap;
+            }
+
             .container {
-                margin-top: 120px; /* 手機版導覽列較小 */
-                padding-top: 20px;
-                padding-bottom: 30px;
-                padding-left: 15px;
-                padding-right: 15px;
+                padding: 30px 15px;
             }
 
             #unity-container {
-                margin: 0 auto 20px auto;
                 padding: 15px;
+                margin: 0 auto 20px auto;
             }
 
             .controls-info {
-                margin: 10px auto;
+                margin: 15px auto 30px auto;
                 padding: 20px;
+            }
+        }
+
+        /* 平板尺寸調整 */
+        @media (max-width: 992px) and (min-width: 769px) {
+            .navbar-image-container {
+                height: 110px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 通用導覽列 -->
+    <!-- 通用導覽列 - 固定在頂部 -->
     <div class="navbar-image-container">
         <!-- 遮罩層 -->
         <div class="navbar-overlay"></div>
@@ -246,61 +310,63 @@
         </div>
     </div>
 
-    <!-- 主要內容區 -->
-    <div class="container">
-        <!-- Unity 遊戲容器 -->
-        <div id="unity-container" class="unity-desktop">
-            <!-- Canvas 包裹層 -->
-            <div class="canvas-wrapper">
-                <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+    <!-- 主要內容區 - 可獨立捲動 -->
+    <div class="main-content-wrapper">
+        <div class="container">
+            <!-- Unity 遊戲容器 -->
+            <div id="unity-container" class="unity-desktop">
+                <!-- Canvas 包裹層 -->
+                <div class="canvas-wrapper">
+                    <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
 
-                <!-- 載入進度條 -->
-                <div id="unity-loading-bar">
-                    <div id="unity-logo"></div>
-                    <div id="unity-progress-bar-empty">
-                        <div id="unity-progress-bar-full"></div>
+                    <!-- 載入進度條 -->
+                    <div id="unity-loading-bar">
+                        <div id="unity-logo"></div>
+                        <div id="unity-progress-bar-empty">
+                            <div id="unity-progress-bar-full"></div>
+                        </div>
                     </div>
+
+                    <!-- 錯誤訊息 -->
+                    <div id="unity-warning"></div>
                 </div>
 
-                <!-- 錯誤訊息 -->
-                <div id="unity-warning"></div>
+                <!-- Unity Footer -->
+                <div id="unity-footer">
+                    <div id="unity-logo-title-footer">
+                        <div id="unity-build-title">竹崎3D導覽</div>
+                    </div>
+                    <div id="unity-fullscreen-button"></div>
+                </div>
             </div>
 
-            <!-- Unity Footer -->
-            <div id="unity-footer">
-                <div id="unity-logo-title-footer">
-                    <div id="unity-build-title">竹崎3D導覽</div>
-                </div>
-                <div id="unity-fullscreen-button"></div>
-            </div>
-        </div>
-
-        <!-- 操作說明 -->
-        <div class="controls-info">
-            <h3><i class="fas fa-keyboard"></i> 遊戲操作說明</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-mouse"></i> 鍵盤控制</h5>
-                    <ul>
-                        <li><strong>W / ↑</strong> - 向前移動</li>
-                        <li><strong>S / ↓</strong> - 向後移動</li>
-                        <li><strong>A / ←</strong> - 向左移動</li>
-                        <li><strong>D / →</strong> - 向右移動</li>
-                        <li><strong>空白鍵</strong> - 跳躍</li>
-                        <li><strong>ESC</strong> - 暫停/選單</li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <h5><i class="fas fa-mouse-pointer"></i> 滑鼠控制</h5>
-                    <ul>
-                        <li><strong>移動滑鼠</strong> - 控制視角</li>
-                        <li><strong>左鍵</strong> - 互動/選擇</li>
-                    </ul>
-                    <hr>
-                    <p class="text-muted small">
-                        <i class="fas fa-info-circle"></i>
-                        提示：遊戲中點擊景點圖示可以查看詳細資訊
-                    </p>
+            <!-- 操作說明 -->
+            <div class="controls-info">
+                <h3><i class="fas fa-keyboard"></i> 遊戲操作說明</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-mouse"></i> 鍵盤控制</h5>
+                        <ul>
+                            <li><strong>W / ↑</strong> - 向前移動</li>
+                            <li><strong>S / ↓</strong> - 向後移動</li>
+                            <li><strong>A / ←</strong> - 向左移動</li>
+                            <li><strong>D / →</strong> - 向右移動</li>
+                            <li><strong>空白鍵</strong> - 跳躍</li>
+                            <li><strong>ESC</strong> - 暫停/選單</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-mouse-pointer"></i> 滑鼠控制</h5>
+                        <ul>
+                            <li><strong>移動滑鼠</strong> - 控制視角</li>
+                            <li><strong>左鍵</strong> - 互動/選擇</li>
+                        </ul>
+                        <hr>
+                        <p class="text-muted small">
+                            <i class="fas fa-info-circle"></i>
+                            提示：遊戲中點擊景點圖示可以查看詳細資訊
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -401,7 +467,7 @@
             // 自訂地圖頁面專用的背景圖片
             const customNavbarImages = [
                 '../index_img/index_bg3.jpg',
-                '../index_img/index_bg2.jpg',    // 或使用 index_img 中的圖片
+                '../index_img/index_bg2.jpg',
                 '../index_img/index_bg1.jpg'
             ];
 
