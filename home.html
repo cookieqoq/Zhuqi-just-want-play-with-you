@@ -498,9 +498,9 @@
             slide.setAttribute('data-index', index);
             slide.setAttribute('data-link', item.link);
 
-            // 添加點擊事件 - 跳轉到對應連結
+            // 添加點擊事件 - 在新分頁中開啟連結
             slide.onclick = () => {
-                window.location.href = item.link;
+                window.open(item.link, '_blank');
             };
 
             homepageSlidesContainer.appendChild(slide);
@@ -590,7 +590,7 @@
         console.log(`✅ 首頁已載入完成`);
         console.log(`🖼️ 主頁面背景圖片數量: ${homepageImages.length}`);
         console.log(`💡 如需修改背景圖片，請編輯 homepageImages 陣列`);
-        console.log(`🔗 點擊背景圖片可跳轉到對應頁面`);
+        console.log(`🔗 點擊背景圖片可在新分頁中開啟對應頁面`);
     </script>
 </body>
 </html>
