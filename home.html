@@ -55,18 +55,14 @@
             pointer-events: none;
         }
 
-        /* 當前標題顯示容器 - 移除序號 */
+        /* 當前標題顯示容器 - 移除黑底背景 */
         .homepage-current-title {
             position: fixed;
             top: 50%;
             right: 80px;
             transform: translateY(-50%);
             z-index: 10;
-            background: rgba(0, 0, 0, 0.6);
             padding: 40px 50px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(15px);
             max-width: 400px;
             transition: all 0.5s ease;
             pointer-events: none;
@@ -74,7 +70,6 @@
 
             .homepage-current-title:hover {
                 transform: translateY(-50%) scale(1.05);
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
             }
 
         .current-title-text {
@@ -84,8 +79,9 @@
             text-align: center;
             line-height: 1.3;
             letter-spacing: 2px;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.9), -1px -1px 5px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.7);
             margin: 0;
+            font-family: 'Helvetica Neue', 'Microsoft JhengHei', Arial, sans-serif;
         }
 
         .current-title-decoration {
@@ -94,6 +90,7 @@
             background: #ffffff;
             margin: 20px auto 0;
             border-radius: 2px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         }
 
         /* 輪播指示器 */
