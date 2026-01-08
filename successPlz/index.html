@@ -22,9 +22,19 @@
     <style>
         /*目前修改*/
         .navbar-image-container {
-            position: relative !important; /* 確保它佔據空間，參與 Flex 排列 */
-            /* 其他樣式保持不變 */
+            position: fixed !important; /* 改為固定定位 */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
         }
+
+        /* 空白佔位容器 - 與導覽列同高 */
+        .navbar-spacer {
+            height: 120px; /* 與導覽列相同高度 */
+            flex-shrink: 0;
+        }
+
         /* 重置 body 樣式 - 移除 padding 和 margin */
         html, body {
             margin: 0;
@@ -40,10 +50,11 @@
 
         /* 導覽列固定在頂部 - 不捲動 */
         .navbar-image-container {
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 120px; /* 固定高度 */
-            flex-shrink: 0; /* 防止被壓縮 */
             z-index: 1000;
             background-size: cover;
             background-position: center;
@@ -312,6 +323,10 @@
                 height: 80px; /* 手機版導覽列較小 */
             }
 
+            .navbar-spacer {
+                height: 80px; /* 與手機版導覽列同高 */
+            }
+
             .navbar-content {
                 padding: 0 15px;
                 flex-wrap: wrap;
@@ -345,6 +360,10 @@
         @media (max-width: 992px) and (min-width: 769px) {
             .navbar-image-container {
                 height: 100px;
+            }
+
+            .navbar-spacer {
+                height: 100px; /* 與平板版導覽列同高 */
             }
 
             .navbar-content {
@@ -384,6 +403,9 @@
 
     <!-- 主要內容區 - 可獨立捲動 -->
     <div class="main-content-wrapper">
+        <!-- 空白佔位容器 - 與導覽列同高，確保內容不被遮擋 -->
+        <div class="navbar-spacer"></div>
+
         <div class="container">
             <!-- Unity 遊戲容器 -->
             <div id="unity-container" class="unity-desktop">
